@@ -7,6 +7,11 @@ import Svg, { Circle, Ellipse, G, Line, Path, Rect } from 'react-native-svg';
 export const VIEW_W = 512;
 export const VIEW_H = 720;
 
+// Skin colours a hand drawing needs, so another character can reuse the hands in its own skin tone.
+export type Skin = { skin: string; skinDark: string; skinShade: string; skinLight: string; nail: string; neck: string };
+// c = skin colours, dx/dy = where the wrist sits relative to this character's.
+export type HandProps = { c?: Skin; dx?: number; dy?: number };
+
 const C = {
   skin: '#b8632e', skinDark: '#8a431c', skinShade: '#9a4d22', skinLight: '#c06c34', nail: '#d98a52', neck: '#a4552a', neckShade: '#8f4720',
   hair: '#2b2224', fade: '#43383a', jacket: '#f09c1c', jacketShade: '#d97f0c', jacketLine: '#c8730a',
@@ -14,7 +19,7 @@ const C = {
   mouth: '#6e2618', tongue: '#d0604e', eyeLine: '#3a1d12', iris: '#6e2f18', pupil: '#2a120a',
 };
 
-const Layer = ({ children }: { children: React.ReactNode }) => (
+export const Layer = ({ children }: { children: React.ReactNode }) => (
   <Svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} width="100%" height="100%" style={StyleSheet.absoluteFill}>
     {children}
   </Svg>
@@ -65,6 +70,17 @@ export const Torso = () => (
   </Layer>
 );
 
+// Left hand resting on the hip: back of the hand, fingers pointing down toward the belt.
+// Not a layer of its own: it is drawn inside the forearm layer.
+export const HandHip = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
+  <G x={dx} y={dy}>
+    <Path d="M356 408 Q338 402 320 409 Q305 414 301 424 Q298 432 304 435 Q299 441 303 447 Q301 453 308 456 Q310 462 318 460 Q333 457 345 447 Q354 438 358 424Z" fill={c.skin} />
+    <Path d="M321 412 Q323 431 331 450" stroke={c.skinShade} strokeWidth={4} fill="none" strokeLinecap="round" opacity={0.4} />
+    <Path d="M304 435 Q314 434 322 429 M303 447 Q314 446 324 439 M308 456 Q318 454 327 448" stroke={c.skinDark} strokeWidth={1.8} fill="none" strokeLinecap="round" opacity={0.75} />
+    <Path d="M330 414 Q340 412 348 416" stroke={c.skinLight} strokeWidth={4} fill="none" strokeLinecap="round" />
+  </G>
+);
+
 // ---- right arm (viewer's right, hand on hip) ----
 export const ArmRUpper = () => (
   <Layer><Line x1={334} y1={320} x2={374} y2={378} stroke={C.jacket} strokeWidth={40} strokeLinecap="round" /></Layer>
@@ -72,11 +88,7 @@ export const ArmRUpper = () => (
 export const ForearmR = () => (
   <Layer>
     <Line x1={374} y1={378} x2={352} y2={410} stroke={C.jacket} strokeWidth={36} strokeLinecap="round" />
-    {/* left hand resting on the hip: back of the hand, fingers pointing down toward the belt */}
-    <Path d="M356 408 Q338 402 320 409 Q305 414 301 424 Q298 432 304 435 Q299 441 303 447 Q301 453 308 456 Q310 462 318 460 Q333 457 345 447 Q354 438 358 424Z" fill={C.skin} />
-    <Path d="M321 412 Q323 431 331 450" stroke={C.skinShade} strokeWidth={4} fill="none" strokeLinecap="round" opacity={0.4} />
-    <Path d="M304 435 Q314 434 322 429 M303 447 Q314 446 324 439 M308 456 Q318 454 327 448" stroke={C.skinDark} strokeWidth={1.8} fill="none" strokeLinecap="round" opacity={0.75} />
-    <Path d="M330 414 Q340 412 348 416" stroke={C.skinLight} strokeWidth={4} fill="none" strokeLinecap="round" />
+    <HandHip />
     <Line x1={361} y1={397} x2={346} y2={420} stroke={C.jacketShade} strokeWidth={39} />
   </Layer>
 );
@@ -98,49 +110,57 @@ export const CuffL = () => (
   </Layer>
 );
 // Right hand hanging at his side: palm toward his leg, thumb in front, fingers loosely curled.
-export const HandRelaxed = () => (
+export const HandRelaxed = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
   <Layer>
-    <Path d="M155 444 Q148 462 151 480 Q154 496 166 498 Q178 498 181 486 Q184 466 181 444Z" fill={C.skin} />
-    <Path d="M156 456 Q151 470 155 484" stroke={C.skinShade} strokeWidth={4} fill="none" strokeLinecap="round" opacity={0.45} />
-    <Path d="M157 480 Q165 485 175 482 M157 488 Q165 493 174 490" stroke={C.skinDark} strokeWidth={1.6} fill="none" strokeLinecap="round" opacity={0.7} />
-    <Ellipse cx={179} cy={467} rx={6.5} ry={14} rotation={-10} origin="179, 467" fill={C.skinLight} />
-    <Ellipse cx={180.5} cy={476} rx={3.5} ry={3} fill={C.nail} />
+    <G x={dx} y={dy}>
+      <Path d="M155 444 Q148 462 151 480 Q154 496 166 498 Q178 498 181 486 Q184 466 181 444Z" fill={c.skin} />
+      <Path d="M156 456 Q151 470 155 484" stroke={c.skinShade} strokeWidth={4} fill="none" strokeLinecap="round" opacity={0.45} />
+      <Path d="M157 480 Q165 485 175 482 M157 488 Q165 493 174 490" stroke={c.skinDark} strokeWidth={1.6} fill="none" strokeLinecap="round" opacity={0.7} />
+      <Ellipse cx={179} cy={467} rx={6.5} ry={14} rotation={-10} origin="179, 467" fill={c.skinLight} />
+      <Ellipse cx={180.5} cy={476} rx={3.5} ry={3} fill={c.nail} />
+    </G>
   </Layer>
 );
 // Thumbs-up and open hands are drawn upright (thumb toward his body), then pre-rotated so they sit
 // upright once the arm is raised.
-export const HandThumb = () => (
+export const HandThumb = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
   <Layer>
-    <G rotation={190} origin="168, 446">
-      <Rect x={148} y={410} width={36} height={40} rx={13} fill={C.skin} />
-      <Circle cx={151} cy={417} r={5} fill={C.neck} />
-      <Circle cx={150} cy={428} r={5} fill={C.neck} />
-      <Circle cx={150} cy={438} r={5} fill={C.neck} />
-      <Rect x={160} y={409} width={30} height={11} rx={5.5} fill={C.skinLight} />
-      <Rect x={160} y={419} width={30} height={11} rx={5.5} fill={C.skin} />
-      <Rect x={160} y={429} width={29} height={10.5} rx={5.25} fill={C.skin} />
-      <Rect x={160} y={438.5} width={26} height={10} rx={5} fill={C.skin} />
-      <Path d="M163 419.5 H188 M163 429.5 H187 M163 439 H184" stroke={C.skinDark} strokeWidth={1.8} strokeLinecap="round" />
-      <G rotation={5} origin="178, 414">
-        <Rect x={170} y={374} width={17} height={42} rx={8.5} fill={C.skinLight} />
-        <Ellipse cx={177} cy={381} rx={5} ry={4.5} fill={C.nail} />
-        <Path d="M172 398 Q178 401 185 398" stroke={C.skinDark} strokeWidth={1.6} fill="none" strokeLinecap="round" />
+    <G x={dx} y={dy}>
+      <G rotation={190} origin="168, 446">
+        <Rect x={148} y={410} width={36} height={40} rx={13} fill={c.skin} />
+        <Circle cx={151} cy={417} r={5} fill={c.neck} />
+        <Circle cx={150} cy={428} r={5} fill={c.neck} />
+        <Circle cx={150} cy={438} r={5} fill={c.neck} />
+        <Rect x={160} y={409} width={30} height={11} rx={5.5} fill={c.skinLight} />
+        <Rect x={160} y={419} width={30} height={11} rx={5.5} fill={c.skin} />
+        <Rect x={160} y={429} width={29} height={10.5} rx={5.25} fill={c.skin} />
+        <Rect x={160} y={438.5} width={26} height={10} rx={5} fill={c.skin} />
+        <Path d="M163 419.5 H188 M163 429.5 H187 M163 439 H184" stroke={c.skinDark} strokeWidth={1.8} strokeLinecap="round" />
+        <G rotation={5} origin="178, 414">
+          <Rect x={170} y={374} width={17} height={42} rx={8.5} fill={c.skinLight} />
+          {/* thumb pad (palm side) faces the viewer, so no nail */}
+          <Ellipse cx={178} cy={386} rx={5.5} ry={9} fill={c.skin} opacity={0.55} />
+          <Path d="M183.5 379 Q186.5 392 183.5 405" stroke={c.skinShade} strokeWidth={2.5} fill="none" strokeLinecap="round" opacity={0.5} />
+          <Path d="M172 398 Q178 401 185 398" stroke={c.skinDark} strokeWidth={1.6} fill="none" strokeLinecap="round" />
+        </G>
       </G>
     </G>
   </Layer>
 );
-export const HandOpen = () => (
+export const HandOpen = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
   <Layer>
-    <G rotation={189} origin="168, 446">
-      <Rect x={148} y={390} width={9} height={34} rx={4.5} rotation={-9} origin="152, 422" fill={C.skin} />
-      <Rect x={157.5} y={380} width={9.5} height={42} rx={4.75} rotation={-3} origin="162, 422" fill={C.skin} />
-      <Rect x={167.5} y={377} width={9.5} height={45} rx={4.75} rotation={2} origin="172, 422" fill={C.skin} />
-      <Rect x={177} y={382} width={9.5} height={40} rx={4.75} rotation={7} origin="181, 422" fill={C.skin} />
-      <Path d="M152 398 h5 M161 392 h5 M171 390 h5 M181 395 h5" stroke={C.skinDark} strokeWidth={1.5} strokeLinecap="round" opacity={0.7} />
-      <Line x1={184} y1={436} x2={201} y2={417} stroke={C.skin} strokeWidth={10.5} strokeLinecap="round" />
-      <Rect x={148} y={410} width={40} height={38} rx={12} fill={C.skin} />
-      <Path d="M155 421 Q168 426 181 419 M157 432 Q166 437 178 433" stroke={C.skinDark} strokeWidth={1.6} fill="none" strokeLinecap="round" opacity={0.7} />
-      <Path d="M178 440 Q186 436 187 428" stroke={C.skinShade} strokeWidth={5} fill="none" strokeLinecap="round" opacity={0.5} />
+    <G x={dx} y={dy}>
+      <G rotation={189} origin="168, 446">
+        <Rect x={148} y={390} width={9} height={34} rx={4.5} rotation={-9} origin="152, 422" fill={c.skin} />
+        <Rect x={157.5} y={380} width={9.5} height={42} rx={4.75} rotation={-3} origin="162, 422" fill={c.skin} />
+        <Rect x={167.5} y={377} width={9.5} height={45} rx={4.75} rotation={2} origin="172, 422" fill={c.skin} />
+        <Rect x={177} y={382} width={9.5} height={40} rx={4.75} rotation={7} origin="181, 422" fill={c.skin} />
+        <Path d="M152 398 h5 M161 392 h5 M171 390 h5 M181 395 h5" stroke={c.skinDark} strokeWidth={1.5} strokeLinecap="round" opacity={0.7} />
+        <Line x1={184} y1={436} x2={201} y2={417} stroke={c.skin} strokeWidth={10.5} strokeLinecap="round" />
+        <Rect x={148} y={410} width={40} height={38} rx={12} fill={c.skin} />
+        <Path d="M155 421 Q168 426 181 419 M157 432 Q166 437 178 433" stroke={c.skinDark} strokeWidth={1.6} fill="none" strokeLinecap="round" opacity={0.7} />
+        <Path d="M178 440 Q186 436 187 428" stroke={c.skinShade} strokeWidth={5} fill="none" strokeLinecap="round" opacity={0.5} />
+      </G>
     </G>
   </Layer>
 );

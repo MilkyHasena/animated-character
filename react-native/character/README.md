@@ -1,6 +1,6 @@
 # Animated character (React Native)
 
-An animated mascot built from SVG. It has a subtle idle loop that runs on its own (breathing, sway, blinks, glances), a talking mouth, and three reactions: **correct** (thumbs-up and a hop), **wrong** (head shake and a sad face) and **wave**.
+Two animated mascots, a man and a woman, built from SVG and sharing one component. Each has a subtle idle loop that runs on its own (breathing, sway, blinks, glances), a talking mouth, and three reactions: **correct** (thumbs-up and a hop), **wrong** (head shake and a sad face) and **wave**.
 
 It's plain React Native code with no WebView and no image files. All motion runs on the UI thread through Reanimated.
 
@@ -27,12 +27,13 @@ Supported versions: react-native-svg 13+ and react-native-reanimated 3.5+ (inclu
 
 ## 2. Copy the folder
 
-Copy this whole `character/` folder into the app, for example to `src/components/character/`. It has three files:
+Copy this whole `character/` folder into the app, for example to `src/components/character/`. It has four files:
 
 | File | What it is |
 |---|---|
 | `Character.tsx` | The component. This is the only file you import from. |
-| `art.tsx` | The drawings. You shouldn't need to edit it. |
+| `art.tsx` | The man's drawings, plus the pieces both characters share. You shouldn't need to edit it. |
+| `art-woman.tsx` | The woman's drawings. |
 | `ExampleScreen.tsx` | A demo screen with buttons and a quiz. Optional; delete it once you've seen it work. |
 
 ## 3. Use it
@@ -50,9 +51,13 @@ function LessonScreen() {
     // runs after the reaction has finished, e.g. go to the next question
   }
 
-  return <Character ref={character} size={200} talking={speaking} />;
+  return <Character ref={character} variant="woman" size={200} talking={speaking} />;
 }
 ```
+
+## The two characters
+
+Pick one with the `variant` prop: `<Character variant="man" />` or `<Character variant="woman" />`. Everything else is identical: the same props, the same `play()` calls and the same `parts`. The woman plays the same reactions with her own timing (a double hop and a bouncy hair puff on **correct**, a quicker wave), so her reactions run about 0.1 s longer. Always `await play()` instead of hard-coding the lengths.
 
 ## Animation states
 
@@ -76,6 +81,7 @@ Rules:
 
 | Prop | Type | Default | |
 |---|---|---|---|
+| `variant` | `'man'` or `'woman'` | `'man'` | Which character to show. |
 | `size` | number | `220` | Width in points. Height is `size × 1.406`. |
 | `talking` | boolean | `false` | Mouth moves as if speaking. |
 | `idle` | boolean | `true` | The looping idle motion. |
@@ -111,7 +117,7 @@ armR.value = withSequence(withTiming(-30, { duration: 400 }), withTiming(0, { du
 
 `MOUTH`, `HAND` and `EYES` are exported from `Character.tsx`. Call `stop()` to put every part back to rest.
 
-To add a new built-in reaction, copy one of the entries in the `REACTIONS` object at the bottom of `Character.tsx` and add its name to the `Reaction` type.
+To add a new built-in reaction, copy one of the entries in the `MAN` and `WOMAN` reaction sets at the bottom of `Character.tsx` and add its name to the `Reaction` type.
 
 ## Troubleshooting
 

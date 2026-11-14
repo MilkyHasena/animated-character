@@ -10,10 +10,14 @@ import Animated, {
   withDelay, withRepeat, withSequence, withTiming,
 } from 'react-native-reanimated';
 import * as Art from './art';
+import * as WomanArt from './art-woman';
 
 export type Reaction = 'correct' | 'wrong' | 'wave';
+export type Variant = 'man' | 'woman';
 
 export type CharacterProps = {
+  /** Which character to show. Both have the same animations and API. Default 'man'. */
+  variant?: Variant;
   /** Width in points. Height is size * 1.406. Default 220. */
   size?: number;
   /** While true the mouth moves as if speaking (pair it with your audio). */
@@ -81,9 +85,27 @@ const Swap = ({ value, is, not, children }: { value: SharedValue<number>; is?: n
   return <Part style={style}>{children}</Part>;
 };
 
-const SPARKS = [
-  { cx: 92, cy: 262, r: 11 }, { cx: 118, cy: 222, r: 8 }, { cx: 84, cy: 300, r: 7 },
-] as const;
+// The drawings for each character. Both files export the same layer names.
+const ART: Record<Variant, typeof WomanArt> = { man: Art, woman: WomanArt };
+
+// Joint pivots and sparkle spots for each character, in canvas units.
+type XY = [x: number, y: number];
+type Rig = {
+  shoulderL: XY; elbowL: XY; shoulderR: XY; elbowR: XY; neck: XY; hair: XY; eyes: XY; browL: XY; browR: XY;
+  sparks: { cx: number; cy: number; r: number }[];
+};
+const RIGS: Record<Variant, Rig> = {
+  man: {
+    shoulderL: [190, 320], elbowL: [170, 386], shoulderR: [334, 320], elbowR: [374, 378],
+    neck: [255, 268], hair: [255, 130], eyes: [254, 190], browL: [219, 154], browR: [289, 154],
+    sparks: [{ cx: 92, cy: 262, r: 11 }, { cx: 118, cy: 222, r: 8 }, { cx: 84, cy: 300, r: 7 }],
+  },
+  woman: {
+    shoulderL: [196, 350], elbowL: [172, 410], shoulderR: [316, 350], elbowR: [370, 404],
+    neck: [256, 318], hair: [256, 150], eyes: [256, 241], browL: [220, 205], browR: [292, 205],
+    sparks: [{ cx: 94, cy: 286, r: 11 }, { cx: 120, cy: 246, r: 8 }, { cx: 86, cy: 324, r: 7 }],
+  },
+};
 
 const Sparkle = ({ p, k, cx, cy, r }: { p: SharedValue<number>; k: number; cx: number; cy: number; r: number }) => {
   const style = useAnimatedStyle(() => {
@@ -95,9 +117,11 @@ const Sparkle = ({ p, k, cx, cy, r }: { p: SharedValue<number>; k: number; cx: n
 };
 
 export const Character = forwardRef<CharacterHandle, CharacterProps>(function Character(
-  { size = 220, talking = false, idle = true, style }, ref,
+  { variant = 'man', size = 220, talking = false, idle = true, style }, ref,
 ) {
   const k = size / Art.VIEW_W;
+  const A = ART[variant];
+  const rig = RIGS[variant];
 
   // reaction values (exposed as `parts`)
   const parts: CharacterParts = {
@@ -130,24 +154,24 @@ export const Character = forwardRef<CharacterHandle, CharacterProps>(function Ch
       ...pivot(k, 257, 684, [{ rotate: `${iRigRot.value}deg` }, { scaleX: p.rigScaleX.value }, { scaleY: p.rigScaleY.value }])] as any,
   }));
   const sUpper = useAnimatedStyle(() => ({ transform: [{ translateY: (iUpperY.value + p.upperY.value) * k }] }));
-  const sArmR = useAnimatedStyle(() => ({ transform: pivot(k, 334, 320, [{ rotate: `${p.armR.value}deg` }]) as any }));
-  const sForearmR = useAnimatedStyle(() => ({ transform: pivot(k, 374, 378, [{ rotate: `${p.forearmR.value}deg` }]) as any }));
-  const sArmL = useAnimatedStyle(() => ({ transform: pivot(k, 190, 320, [{ rotate: `${iArmL.value + p.armL.value}deg` }]) as any }));
-  const sForearmL = useAnimatedStyle(() => ({ transform: pivot(k, 170, 386, [{ rotate: `${p.forearmL.value}deg` }]) as any }));
+  const sArmR = useAnimatedStyle(() => ({ transform: pivot(k, rig.shoulderR[0], rig.shoulderR[1], [{ rotate: `${p.armR.value}deg` }]) as any }));
+  const sForearmR = useAnimatedStyle(() => ({ transform: pivot(k, rig.elbowR[0], rig.elbowR[1], [{ rotate: `${p.forearmR.value}deg` }]) as any }));
+  const sArmL = useAnimatedStyle(() => ({ transform: pivot(k, rig.shoulderL[0], rig.shoulderL[1], [{ rotate: `${iArmL.value + p.armL.value}deg` }]) as any }));
+  const sForearmL = useAnimatedStyle(() => ({ transform: pivot(k, rig.elbowL[0], rig.elbowL[1], [{ rotate: `${p.forearmL.value}deg` }]) as any }));
   const sHead = useAnimatedStyle(() => ({
     transform: [{ translateY: (iHeadY.value + p.headY.value) * k },
-      ...pivot(k, 255, 268, [{ rotate: `${iHeadRot.value + p.head.value}deg` }])] as any,
+      ...pivot(k, rig.neck[0], rig.neck[1], [{ rotate: `${iHeadRot.value + p.head.value}deg` }])] as any,
   }));
-  const sHair = useAnimatedStyle(() => ({ transform: pivot(k, 255, 130, [{ scaleY: p.hairScaleY.value }]) as any }));
-  const sEyes = useAnimatedStyle(() => ({ transform: pivot(k, 254, 190, [{ scaleY: blinkY.value }]) as any }));
+  const sHair = useAnimatedStyle(() => ({ transform: pivot(k, rig.hair[0], rig.hair[1], [{ scaleY: p.hairScaleY.value }]) as any }));
+  const sEyes = useAnimatedStyle(() => ({ transform: pivot(k, rig.eyes[0], rig.eyes[1], [{ scaleY: blinkY.value }]) as any }));
   const sPupils = useAnimatedStyle(() => ({
     transform: [{ translateX: lookX.value * k }, { translateY: (lookY.value + p.pupilY.value) * k }],
   }));
   const sBrowL = useAnimatedStyle(() => ({
-    transform: [{ translateY: p.browLY.value * k }, ...pivot(k, 219, 154, [{ rotate: `${p.browLRot.value}deg` }])] as any,
+    transform: [{ translateY: p.browLY.value * k }, ...pivot(k, rig.browL[0], rig.browL[1], [{ rotate: `${p.browLRot.value}deg` }])] as any,
   }));
   const sBrowR = useAnimatedStyle(() => ({
-    transform: [{ translateY: p.browRY.value * k }, ...pivot(k, 289, 154, [{ rotate: `${p.browRRot.value}deg` }])] as any,
+    transform: [{ translateY: p.browRY.value * k }, ...pivot(k, rig.browR[0], rig.browR[1], [{ rotate: `${p.browRRot.value}deg` }])] as any,
   }));
 
   // ---------- control ----------
@@ -170,7 +194,7 @@ export const Character = forwardRef<CharacterHandle, CharacterProps>(function Ch
   const play = (reaction: Reaction) => {
     stop();
     busy.current = true;
-    const { duration, cues } = REACTIONS[reaction](p);
+    const { duration, cues } = REACTIONS[variant][reaction](p);
     const later = (ms: number, fn: () => void) => timers.current.push(setTimeout(fn, ms));
     cues.forEach(([ms, fn]) => later(ms, fn));
     return new Promise<void>(resolve => {
@@ -250,47 +274,48 @@ export const Character = forwardRef<CharacterHandle, CharacterProps>(function Ch
     <View style={[{ width: size, height: size * (Art.VIEW_H / Art.VIEW_W) }, styles.noTouch, style]}>
       <Part style={sShadow}><Art.Shadow /></Part>
       <Part style={sRig}>
-        <Art.Legs />
+        <A.Legs />
         <Part style={sUpper}>
-          <Art.Torso />
+          <A.Torso />
           <Part style={sArmR}>
-            <Art.ArmRUpper />
-            <Part style={sForearmR}><Art.ForearmR /></Part>
-          </Part>
-          <Part style={sArmL}>
-            <Art.ArmLUpper />
-            <Part style={sForearmL}>
-              <Art.ForearmL />
-              <Swap value={p.hand} is={HAND.relaxed}><Art.HandRelaxed /></Swap>
-              <Swap value={p.hand} is={HAND.thumb}><Art.HandThumb /></Swap>
-              <Swap value={p.hand} is={HAND.open}><Art.HandOpen /></Swap>
-              <Art.CuffL />
-            </Part>
+            <A.ArmRUpper />
+            <Part style={sForearmR}><A.ForearmR /></Part>
           </Part>
           <Part style={sHead}>
-            <Art.HeadBase />
-            <Swap value={p.mouth} is={MOUTH.smile}><Art.MouthSmile /></Swap>
-            <Swap value={p.mouth} is={MOUTH.grin}><Art.MouthGrin /></Swap>
-            <Swap value={p.mouth} is={MOUTH.open}><Art.MouthOpen /></Swap>
-            <Swap value={p.mouth} is={MOUTH.mid}><Art.MouthMid /></Swap>
-            <Swap value={p.mouth} is={MOUTH.sad}><Art.MouthSad /></Swap>
+            <A.HeadBase />
+            <Swap value={p.mouth} is={MOUTH.smile}><A.MouthSmile /></Swap>
+            <Swap value={p.mouth} is={MOUTH.grin}><A.MouthGrin /></Swap>
+            <Swap value={p.mouth} is={MOUTH.open}><A.MouthOpen /></Swap>
+            <Swap value={p.mouth} is={MOUTH.mid}><A.MouthMid /></Swap>
+            <Swap value={p.mouth} is={MOUTH.sad}><A.MouthSad /></Swap>
             <Swap value={p.eyes} not={EYES.happy}>
               <Part style={sEyes}>
-                <Art.EyeWhites />
-                <Part style={sPupils}><Art.Pupils /></Part>
-                <Swap value={p.eyes} is={EYES.sad}><Art.SadLids /></Swap>
-                <Art.EyeOutlines />
+                <A.EyeWhites />
+                <Part style={sPupils}><A.Pupils /></Part>
+                <Swap value={p.eyes} is={EYES.sad}><A.SadLids /></Swap>
+                <A.EyeOutlines />
               </Part>
             </Swap>
-            <Swap value={p.eyes} is={EYES.happy}><Art.EyesHappy /></Swap>
-            <Part style={sBrowL}><Art.BrowL /></Part>
-            <Part style={sBrowR}><Art.BrowR /></Part>
-            <Part style={sHair}><Art.Hair /></Part>
+            <Swap value={p.eyes} is={EYES.happy}><A.EyesHappy /></Swap>
+            <Part style={sBrowL}><A.BrowL /></Part>
+            <Part style={sBrowR}><A.BrowR /></Part>
+            <Part style={sHair}><A.Hair /></Part>
+          </Part>
+          {/* the free arm is drawn after the head, so a raised hand passes in front of the face, never behind it */}
+          <Part style={sArmL}>
+            <A.ArmLUpper />
+            <Part style={sForearmL}>
+              <A.ForearmL />
+              <Swap value={p.hand} is={HAND.relaxed}><A.HandRelaxed /></Swap>
+              <Swap value={p.hand} is={HAND.thumb}><A.HandThumb /></Swap>
+              <Swap value={p.hand} is={HAND.open}><A.HandOpen /></Swap>
+              <A.CuffL />
+            </Part>
           </Part>
         </Part>
-        <Sparkle p={p.spark1} k={k} {...SPARKS[0]} />
-        <Sparkle p={p.spark2} k={k} {...SPARKS[1]} />
-        <Sparkle p={p.spark3} k={k} {...SPARKS[2]} />
+        <Sparkle p={p.spark1} k={k} {...rig.sparks[0]} />
+        <Sparkle p={p.spark2} k={k} {...rig.sparks[1]} />
+        <Sparkle p={p.spark3} k={k} {...rig.sparks[2]} />
       </Part>
     </View>
   );
@@ -300,7 +325,9 @@ export const Character = forwardRef<CharacterHandle, CharacterProps>(function Ch
 // Each one starts its tracks and returns its total length plus [ms, fn] cues for face / hand swaps.
 type Built = { duration: number; cues: [number, () => void][] };
 
-const REACTIONS: Record<Reaction, (p: CharacterParts) => Built> = {
+type ReactionSet = Record<Reaction, (p: CharacterParts) => Built>;
+
+const MAN: ReactionSet = {
   // Thumbs up with a hop and sparkles.
   correct: p => {
     const d = 2000;
@@ -355,7 +382,7 @@ const REACTIONS: Record<Reaction, (p: CharacterParts) => Built> = {
     const d = 2100;
     track(p.armL, d, [[0, 0], [0.06, -5], [0.22, 45], [0.82, 45], [1, 0]]);
     track(p.forearmL, d, [[0, 0], [0.06, 0], [0.22, 126], [0.32, 142], [0.42, 112], [0.52, 142], [0.62, 112], [0.72, 140], [0.82, 126], [1, 0]]);
-    track(p.head, d, [[0, 0], [0.22, -3], [0.82, -3], [1, 0]]);
+    track(p.head, d, [[0, 0], [0.22, 3], [0.82, 3], [1, 0]]); // tilt away from the waving hand
     for (const b of [p.browLY, p.browRY]) track(b, d, [[0, 0], [0.2, -4], [0.82, -4], [1, 0]]);
     return {
       duration: d,
@@ -367,6 +394,79 @@ const REACTIONS: Record<Reaction, (p: CharacterParts) => Built> = {
     };
   },
 };
+
+// Same three reactions with her own, bouncier timing: a double hop, a springy hair puff, a quicker wave.
+const WOMAN: ReactionSet = {
+  correct: p => {
+    const d = 2100;
+    // big hop, then a small second one
+    track(p.rigY, d, [[0, 0], [0.07, 0], [0.17, -34], [0.27, 0], [0.36, -14], [0.45, 0], [1, 0]]);
+    track(p.rigScaleX, d, [[0, 1], [0.07, 1.04], [0.17, 0.96], [0.27, 1.05], [0.32, 1], [0.36, 0.98], [0.45, 1.03], [0.52, 1], [1, 1]]);
+    track(p.rigScaleY, d, [[0, 1], [0.07, 0.93], [0.17, 1.05], [0.27, 0.94], [0.32, 1], [0.36, 1.02], [0.45, 0.96], [0.52, 1], [1, 1]]);
+    track(p.shadowScale, d, [[0, 1], [0.07, 1.04], [0.17, 0.75], [0.27, 1.05], [0.36, 0.88], [0.45, 1.03], [0.52, 1], [1, 1]]);
+    // the puff stretches in the air, squashes on landing and wobbles to rest
+    track(p.hairScaleY, d, [[0, 1], [0.07, 0.94], [0.17, 1.1], [0.27, 0.86], [0.36, 1.07], [0.45, 0.9], [0.53, 1.04], [0.6, 0.98], [0.66, 1], [1, 1]]);
+    track(p.armL, d, [[0, 0], [0.07, -8], [0.24, 55], [0.32, 52], [0.82, 52], [1, 0]]);
+    track(p.forearmL, d, [[0, 0], [0.07, 0], [0.24, 121], [0.32, 116], [0.42, 107], [0.5, 116], [0.58, 108], [0.66, 116], [0.82, 116], [1, 0]]);
+    track(p.head, d, [[0, 0], [0.27, 6], [0.45, 3], [0.6, 6], [0.82, 5], [1, 0]]);
+    for (const b of [p.browLY, p.browRY]) track(b, d, [[0, 0], [0.2, -6], [0.82, -6], [1, 0]]);
+    [p.spark1, p.spark2, p.spark3].forEach((s, i) => track(s, 650, [[0, 0], [1, 1]], 600 + i * 130));
+    return {
+      duration: d,
+      cues: [
+        [0, () => { p.mouth.value = MOUTH.grin; }],
+        [280, () => { p.hand.value = HAND.thumb; }],
+        [400, () => { p.eyes.value = EYES.happy; }],
+        [1750, () => { p.eyes.value = EYES.open; }],
+        [1900, () => { p.hand.value = HAND.relaxed; }],
+      ],
+    };
+  },
+
+  // Slower shake, head tips to one side, then a small sigh.
+  wrong: p => {
+    const d = 2000;
+    const hold = (v: number): Row[] => [[0, 0], [0.12, v], [0.85, v], [1, 0]];
+    track(p.head, d, [[0, 0], [0.12, -8], [0.28, 8], [0.42, -5], [0.54, 3], [0.85, 3], [1, 0]]);
+    track(p.headY, d, hold(6));
+    track(p.upperY, d, [[0, 0], [0.12, 4], [0.55, 4], [0.65, 1], [0.78, 5], [0.88, 5], [1, 0]]);
+    track(p.hairScaleY, d, [[0, 1], [0.15, 0.95], [0.85, 0.95], [1, 1]]);
+    track(p.browLY, d, hold(2));
+    track(p.browRY, d, hold(2));
+    track(p.browLRot, d, hold(-14));
+    track(p.browRRot, d, hold(14));
+    track(p.pupilY, d, hold(4));
+    return {
+      duration: d,
+      cues: [
+        [0, () => { p.mouth.value = MOUTH.sad; }],
+        [140, () => { p.eyes.value = EYES.sad; }],
+        [1800, () => { p.eyes.value = EYES.open; }],
+      ],
+    };
+  },
+
+  // Quick, excited wave with a bounce on her toes.
+  wave: p => {
+    const d = 2200;
+    track(p.armL, d, [[0, 0], [0.05, -5], [0.18, 56], [0.84, 56], [1, 0]]);
+    track(p.forearmL, d, [[0, 0], [0.05, 0], [0.18, 104], [0.26, 113], [0.34, 90], [0.42, 113], [0.5, 90], [0.58, 113], [0.66, 90], [0.74, 111], [0.84, 104], [1, 0]]);
+    track(p.head, d, [[0, 0], [0.18, 4], [0.5, 2], [0.84, 4], [1, 0]]);
+    track(p.rigY, d, [[0, 0], [0.18, 0], [0.26, -5], [0.34, 0], [0.42, -5], [0.5, 0], [0.58, -5], [0.66, 0], [1, 0]]);
+    track(p.hairScaleY, d, [[0, 1], [0.26, 1.04], [0.34, 0.96], [0.42, 1.04], [0.5, 0.96], [0.58, 1.04], [0.66, 0.97], [0.74, 1], [1, 1]]);
+    for (const b of [p.browLY, p.browRY]) track(b, d, [[0, 0], [0.2, -5], [0.84, -5], [1, 0]]);
+    return {
+      duration: d,
+      cues: [
+        [0, () => { p.mouth.value = MOUTH.grin; }],
+        [240, () => { p.hand.value = HAND.open; }],
+        [2000, () => { p.hand.value = HAND.relaxed; }],
+      ],
+    };
+  },
+};
+
+const REACTIONS: Record<Variant, ReactionSet> = { man: MAN, woman: WOMAN };
 
 const styles = StyleSheet.create({ noTouch: { pointerEvents: 'none' } });
 

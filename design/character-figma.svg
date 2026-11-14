@@ -167,7 +167,8 @@
             <path d="M163 419.5 H188 M163 429.5 H187 M163 439 H184" stroke="#8a431c" stroke-width="1.8" stroke-linecap="round"/>
             <g transform="rotate(5 178 414)">
               <rect x="170" y="374" width="17" height="42" rx="8.5" fill="#c06c34"/>
-              <ellipse cx="177" cy="381" rx="5" ry="4.5" fill="#d98a52"/>
+              <ellipse cx="178" cy="386" rx="5.5" ry="9" fill="#b8632e" opacity=".55"/>
+              <path d="M183.5 379 Q186.5 392 183.5 405" stroke="#9a4d22" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".5"/>
               <path d="M172 398 Q178 401 185 398" stroke="#8a431c" stroke-width="1.6" fill="none" stroke-linecap="round"/>
             </g>
           </g>

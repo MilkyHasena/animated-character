@@ -1,13 +1,14 @@
 // Demo screen: buttons for every animation plus a tiny quiz. Copy what you need.
 import React, { useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Character, CharacterHandle } from './Character';
+import { Character, CharacterHandle, Variant } from './Character';
 
 const QUESTION = { prompt: 'What does "hola" mean?', answers: ['Hello', 'Goodbye', 'Thank you'], correct: 0 };
 
 export default function ExampleScreen() {
   const character = useRef<CharacterHandle>(null);
   const [talking, setTalking] = useState(false);
+  const [variant, setVariant] = useState<Variant>('woman');
 
   const answer = async (index: number) => {
     setTalking(false);
@@ -17,13 +18,14 @@ export default function ExampleScreen() {
 
   return (
     <View style={styles.screen}>
-      <Character ref={character} size={200} talking={talking} />
+      <Character ref={character} variant={variant} size={200} talking={talking} />
 
       <View style={styles.row}>
         <Button label="Correct" onPress={() => character.current?.play('correct')} />
         <Button label="Wrong" onPress={() => character.current?.play('wrong')} />
         <Button label="Wave" onPress={() => character.current?.play('wave')} />
         <Button label={talking ? 'Stop talking' : 'Talk'} onPress={() => setTalking(t => !t)} />
+        <Button label="Switch character" onPress={() => setVariant(v => (v === 'man' ? 'woman' : 'man'))} />
       </View>
 
       <Text style={styles.prompt}>{QUESTION.prompt}</Text>
