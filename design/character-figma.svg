@@ -53,10 +53,12 @@
         <line x1="334" y1="320" x2="374" y2="378" stroke="#f09c1c" stroke-width="40" stroke-linecap="round"/>
         <g id="forearm-r">
           <line x1="374" y1="378" x2="352" y2="410" stroke="#f09c1c" stroke-width="36" stroke-linecap="round"/>
+          <!-- left hand resting on the hip: back of the hand, fingers pointing down toward the belt -->
           <g id="hand-r">
-            <ellipse cx="322" cy="434" rx="27" ry="21" transform="rotate(-18 322 434)" fill="#b8632e"/>
-            <ellipse cx="338" cy="419" rx="10" ry="8" fill="#b8632e"/>
-            <path d="M303 432 L298 446 M313 436 L309 451 M324 438 L321 452" stroke="#8a431c" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M356 408 Q338 402 320 409 Q305 414 301 424 Q298 432 304 435 Q299 441 303 447 Q301 453 308 456 Q310 462 318 460 Q333 457 345 447 Q354 438 358 424Z" fill="#b8632e"/>
+            <path d="M321 412 Q323 431 331 450" stroke="#9a4d22" stroke-width="4" fill="none" stroke-linecap="round" opacity=".4"/>
+            <path d="M304 435 Q314 434 322 429 M303 447 Q314 446 324 439 M308 456 Q318 454 327 448" stroke="#8a431c" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".75"/>
+            <path d="M330 414 Q340 412 348 416" stroke="#c06c34" stroke-width="4" fill="none" stroke-linecap="round"/>
           </g>
           <line x1="361" y1="397" x2="346" y2="420" stroke="#d97f0c" stroke-width="39"/>
         </g>
@@ -67,11 +69,16 @@
         <path d="M207 336 L190 388" stroke="#c8730a" stroke-width="2" stroke-linecap="round"/>
         <g id="forearm-l">
           <line x1="170" y1="386" x2="168" y2="428" stroke="#f09c1c" stroke-width="38" stroke-linecap="round"/>
+          <!-- right hand hanging at his side: palm toward his leg, thumb in front, fingers loosely curled -->
           <g id="hand-l-relaxed">
-            <ellipse cx="167" cy="470" rx="18" ry="27" fill="#b8632e"/>
-            <path d="M177 458 Q184 474 175 490 M158 487 Q160 494 164 496" stroke="#8a431c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M155 444 Q148 462 151 480 Q154 496 166 498 Q178 498 181 486 Q184 466 181 444Z" fill="#b8632e"/>
+            <path d="M156 456 Q151 470 155 484" stroke="#9a4d22" stroke-width="4" fill="none" stroke-linecap="round" opacity=".45"/>
+            <path d="M157 480 Q165 485 175 482 M157 488 Q165 493 174 490" stroke="#8a431c" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/>
+            <ellipse cx="179" cy="467" rx="6.5" ry="14" transform="rotate(-10 179 467)" fill="#c06c34"/>
+            <ellipse cx="180.5" cy="476" rx="3.5" ry="3" fill="#d98a52"/>
           </g>
-          <!-- These two hands are drawn upright and pre-rotated, so they sit upright once the arm is raised. -->
+          <!-- Thumbs-up and open hands are drawn upright (thumb toward his body) and pre-rotated, so they
+               sit upright once the arm is raised. -->
           <rect x="147" y="424" width="42" height="22" rx="6" fill="#d97f0c"/>
           <path d="M189 392 L187 424" stroke="#c8730a" stroke-width="2" stroke-linecap="round"/>
         </g>
@@ -151,21 +158,31 @@
   <g id="variants">
     <g transform="translate(432 -315)">
       <g id="hand-l-thumb">
-            <rect x="153" y="382" width="15" height="44" rx="7.5" transform="rotate(-6 160 424)" fill="#b8632e"/>
-            <rect x="148" y="408" width="40" height="40" rx="12" fill="#b8632e"/>
-            <path d="M171 420 H186 M171 429 H187 M171 438 H186" stroke="#8a431c" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M169 414 V442" stroke="#8a431c" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+            <rect x="148" y="410" width="36" height="40" rx="13" fill="#b8632e"/>
+            <circle cx="151" cy="417" r="5" fill="#a4552a"/><circle cx="150" cy="428" r="5" fill="#a4552a"/><circle cx="150" cy="438" r="5" fill="#a4552a"/>
+            <rect x="160" y="409" width="30" height="11" rx="5.5" fill="#c06c34"/>
+            <rect x="160" y="419" width="30" height="11" rx="5.5" fill="#b8632e"/>
+            <rect x="160" y="429" width="29" height="10.5" rx="5.25" fill="#b8632e"/>
+            <rect x="160" y="438.5" width="26" height="10" rx="5" fill="#b8632e"/>
+            <path d="M163 419.5 H188 M163 429.5 H187 M163 439 H184" stroke="#8a431c" stroke-width="1.8" stroke-linecap="round"/>
+            <g transform="rotate(5 178 414)">
+              <rect x="170" y="374" width="17" height="42" rx="8.5" fill="#c06c34"/>
+              <ellipse cx="177" cy="381" rx="5" ry="4.5" fill="#d98a52"/>
+              <path d="M172 398 Q178 401 185 398" stroke="#8a431c" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            </g>
           </g>
     </g>
     <g transform="translate(552 -315)">
       <g id="hand-l-open">
-            <line x1="153" y1="434" x2="138" y2="418" stroke="#b8632e" stroke-width="10" stroke-linecap="round"/>
-            <rect x="150" y="386" width="8.5" height="36" rx="4.25" fill="#b8632e"/>
-            <rect x="159.5" y="380" width="8.5" height="42" rx="4.25" fill="#b8632e"/>
-            <rect x="169" y="381" width="8.5" height="41" rx="4.25" fill="#b8632e"/>
-            <rect x="178.5" y="388" width="8.5" height="34" rx="4.25" fill="#b8632e"/>
-            <rect x="149" y="410" width="38" height="38" rx="11" fill="#b8632e"/>
-            <path d="M158 432 Q168 438 178 432" stroke="#8a431c" stroke-width="2" fill="none" stroke-linecap="round" opacity=".6"/>
+            <rect x="148" y="390" width="9" height="34" rx="4.5" transform="rotate(-9 152 422)" fill="#b8632e"/>
+            <rect x="157.5" y="380" width="9.5" height="42" rx="4.75" transform="rotate(-3 162 422)" fill="#b8632e"/>
+            <rect x="167.5" y="377" width="9.5" height="45" rx="4.75" transform="rotate(2 172 422)" fill="#b8632e"/>
+            <rect x="177" y="382" width="9.5" height="40" rx="4.75" transform="rotate(7 181 422)" fill="#b8632e"/>
+            <path d="M152 398 h5 M161 392 h5 M171 390 h5 M181 395 h5" stroke="#8a431c" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
+            <line x1="184" y1="436" x2="201" y2="417" stroke="#b8632e" stroke-width="10.5" stroke-linecap="round"/>
+            <rect x="148" y="410" width="40" height="38" rx="12" fill="#b8632e"/>
+            <path d="M155 421 Q168 426 181 419 M157 432 Q166 437 178 433" stroke="#8a431c" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".7"/>
+            <path d="M178 440 Q186 436 187 428" stroke="#9a4d22" stroke-width="5" fill="none" stroke-linecap="round" opacity=".5"/>
           </g>
     </g>
     <g transform="translate(586 -88)">
