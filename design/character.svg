@@ -1,0 +1,203 @@
+<svg id="character" viewBox="0 0 512 720" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    /* joint pivots are the transform-origin values below, in viewBox units */
+    #character .pupil { transition: translate .18s ease-out; }
+    #character .fx { transform-box: fill-box; transform-origin: center; }
+  </style>
+  <defs>
+    <clipPath id="clip-eye-l"><circle cx="220" cy="190" r="21"/></clipPath>
+    <clipPath id="clip-eye-r"><circle cx="288" cy="190" r="21"/></clipPath>
+  </defs>
+
+  <ellipse id="shadow" class="fx" cx="257" cy="686" rx="112" ry="9" fill="#000" opacity=".08"/>
+
+  <g id="rig" style="transform-origin:257px 684px">
+
+    <!-- LEGS -->
+    <g id="legs">
+      <g id="leg-l" style="transform-origin:224px 460px">
+        <path d="M250 646 L250 674 L160 674 Q155 662 168 653 Q192 640 216 636 L250 640Z" fill="#f4f6f9" stroke="#d3dde8" stroke-width="1.5"/>
+        <path d="M176 650 Q186 660 184 674" stroke="#dfe6ee" stroke-width="3" fill="none"/>
+        <path d="M200 643 l8 8 M211 640 l8 8" stroke="#c9d5e2" stroke-width="3" stroke-linecap="round"/>
+        <rect x="156" y="670" width="94" height="14" rx="7" fill="#a9b9cb"/>
+        <path d="M193 446 L257 446 L257 482 L251 640 L189 640Z" fill="#155b68"/>
+        <path d="M187 620 H253 L252 646 Q220 650 187 646Z" fill="#0f4753"/>
+        <path d="M188 627 H252" stroke="#155b68" stroke-width="2"/>
+      </g>
+      <g id="leg-r" style="transform-origin:288px 460px">
+        <path d="M264 646 L264 674 L354 674 Q359 662 346 653 Q322 640 298 636 L264 640Z" fill="#f4f6f9" stroke="#d3dde8" stroke-width="1.5"/>
+        <path d="M338 650 Q328 660 330 674" stroke="#dfe6ee" stroke-width="3" fill="none"/>
+        <path d="M314 643 l-8 8 M303 640 l-8 8" stroke="#c9d5e2" stroke-width="3" stroke-linecap="round"/>
+        <rect x="264" y="670" width="94" height="14" rx="7" fill="#a9b9cb"/>
+        <path d="M255 446 L319 446 L329 640 L267 640 L257 482Z" fill="#155b68"/>
+        <path d="M265 620 H331 L332 646 Q298 650 265 646Z" fill="#0f4753"/>
+        <path d="M266 627 H331" stroke="#155b68" stroke-width="2"/>
+      </g>
+      <path d="M257 448 V481 M206 462 Q222 470 240 464 M274 464 Q292 470 308 462" stroke="#0f4753" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+
+    <!-- UPPER BODY (breathes as one piece) -->
+    <g id="upper">
+
+      <g id="torso">
+        <path d="M228 290 H282 L284 452 H226Z" fill="#fff"/>
+        <path d="M233 258 H277 V298 Q255 316 233 298Z" fill="#a4552a"/>
+        <path d="M233 262 H277 V282 Q255 292 233 282Z" fill="#8f4720"/>
+        <path d="M231 297 Q255 319 279 297" stroke="#dfe3e8" stroke-width="5" fill="none"/>
+        <path d="M233 286 Q200 289 178 304 Q168 330 172 362 L184 452 H233Z" fill="#f09c1c"/>
+        <path d="M277 286 Q310 289 332 304 Q342 330 338 362 L326 452 H277Z" fill="#f09c1c"/>
+        <path d="M183 438 H233 V453 H185Z M277 438 H327 L325 453 H277Z" fill="#d97f0c"/>
+        <path d="M224 326 V438 M286 326 V438" stroke="#c8730a" stroke-width="2"/>
+        <path d="M239 276 Q212 280 205 297 L224 324 L239 300Z M271 276 Q298 280 305 297 L286 324 L271 300Z" fill="#d97f0c"/>
+        <!-- pocket + patch -->
+        <path d="M287 352 V368 Q287 374 293 374 H315 Q321 374 321 368 V352" stroke="#c8730a" stroke-width="2" fill="none"/>
+        <g id="patch">
+          <rect x="285" y="338" width="38" height="14" rx="3" fill="#2b2224"/>
+          <rect x="288" y="340.5" width="32" height="3.5" fill="#2f9e44"/>
+          <rect x="288" y="344" width="32" height="5.5" fill="#f5c518"/>
+          <path d="M288 349.5 L292 344 L296 349.5Z M296 349.5 L300 344 L304 349.5Z M304 349.5 L308 344 L312 349.5Z M312 349.5 L316 344 L320 349.5Z" fill="#d92c20"/>
+        </g>
+      </g>
+
+      <!-- ARM RIGHT (viewer's right, hand on hip) -->
+      <g id="arm-r" style="transform-origin:334px 320px">
+        <line x1="334" y1="320" x2="374" y2="378" stroke="#f09c1c" stroke-width="40" stroke-linecap="round"/>
+        <g id="forearm-r" style="transform-origin:374px 378px">
+          <line x1="374" y1="378" x2="352" y2="410" stroke="#f09c1c" stroke-width="36" stroke-linecap="round"/>
+          <g id="hand-r">
+            <ellipse cx="322" cy="434" rx="27" ry="21" transform="rotate(-18 322 434)" fill="#b8632e"/>
+            <ellipse cx="338" cy="419" rx="10" ry="8" fill="#b8632e"/>
+            <path d="M303 432 L298 446 M313 436 L309 451 M324 438 L321 452" stroke="#8a431c" stroke-width="2.5" stroke-linecap="round"/>
+          </g>
+          <line x1="361" y1="397" x2="346" y2="420" stroke="#d97f0c" stroke-width="39"/>
+        </g>
+      </g>
+
+      <!-- ARM LEFT (viewer's left: thumbs up / wave) -->
+      <g id="arm-l" style="transform-origin:190px 320px">
+        <line x1="190" y1="320" x2="170" y2="386" stroke="#f09c1c" stroke-width="40" stroke-linecap="round"/>
+        <path d="M207 336 L190 388" stroke="#c8730a" stroke-width="2" stroke-linecap="round"/>
+        <g id="forearm-l" style="transform-origin:170px 386px">
+          <line x1="170" y1="386" x2="168" y2="428" stroke="#f09c1c" stroke-width="38" stroke-linecap="round"/>
+          <g id="hand-l-relaxed">
+            <ellipse cx="167" cy="470" rx="18" ry="27" fill="#b8632e"/>
+            <path d="M177 458 Q184 474 175 490 M158 487 Q160 494 164 496" stroke="#8a431c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </g>
+          <!-- These two hands are drawn upright and pre-rotated, so they sit upright once the arm is raised. -->
+          <g id="hand-l-thumb" style="transform-origin:168px 446px; transform:rotate(190deg); display:none">
+            <rect x="153" y="382" width="15" height="44" rx="7.5" transform="rotate(-6 160 424)" fill="#b8632e"/>
+            <rect x="148" y="408" width="40" height="40" rx="12" fill="#b8632e"/>
+            <path d="M171 420 H186 M171 429 H187 M171 438 H186" stroke="#8a431c" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M169 414 V442" stroke="#8a431c" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+          </g>
+          <g id="hand-l-open" style="transform-origin:168px 446px; transform:rotate(189deg); display:none">
+            <line x1="153" y1="434" x2="138" y2="418" stroke="#b8632e" stroke-width="10" stroke-linecap="round"/>
+            <rect x="150" y="386" width="8.5" height="36" rx="4.25" fill="#b8632e"/>
+            <rect x="159.5" y="380" width="8.5" height="42" rx="4.25" fill="#b8632e"/>
+            <rect x="169" y="381" width="8.5" height="41" rx="4.25" fill="#b8632e"/>
+            <rect x="178.5" y="388" width="8.5" height="34" rx="4.25" fill="#b8632e"/>
+            <rect x="149" y="410" width="38" height="38" rx="11" fill="#b8632e"/>
+            <path d="M158 432 Q168 438 178 432" stroke="#8a431c" stroke-width="2" fill="none" stroke-linecap="round" opacity=".6"/>
+          </g>
+          <rect x="147" y="424" width="42" height="22" rx="6" fill="#d97f0c"/>
+          <path d="M189 392 L187 424" stroke="#c8730a" stroke-width="2" stroke-linecap="round"/>
+        </g>
+      </g>
+
+      <!-- HEAD -->
+      <g id="head" style="transform-origin:255px 268px">
+        <g id="ears">
+          <circle cx="166" cy="206" r="27" fill="#b8632e"/>
+          <path d="M159 195 Q173 199 170 217" stroke="#8a431c" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <circle cx="344" cy="206" r="27" fill="#b8632e"/>
+          <path d="M351 195 Q337 199 340 217" stroke="#8a431c" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </g>
+        <path id="face" d="M174 150 V200 Q174 272 255 274 Q336 272 336 200 V150 Q336 112 255 112 Q174 112 174 150Z" fill="#b8632e"/>
+        <path d="M174 128 H190 V178 H174Z M320 128 H336 V178 H320Z" fill="#43383a"/>
+        <path id="beard" d="M174 176 H190 Q192 210 212 226 Q234 217 255 220 Q276 217 298 226 Q318 210 320 176 H336 V200 Q336 274 255 278 Q174 274 174 200Z" fill="#2b2224"/>
+        <path d="M229 238 Q255 229 281 238 Q283 256 255 261 Q227 256 229 238Z" fill="#b8632e"/>
+        <ellipse cx="255" cy="262" rx="7" ry="4" fill="#2b2224"/>
+        <ellipse id="nose" cx="255" cy="212" rx="11" ry="7" fill="#9a4d22"/>
+
+        <g id="mouth">
+          <g id="mouth-smile">
+            <path d="M233 238 Q255 244 277 238 Q275 255 255 255 Q235 255 233 238Z" fill="#6e2618"/>
+            <path d="M236 239.5 Q255 245 274 239.5 Q272 247 255 248 Q238 247 236 239.5Z" fill="#fff"/>
+          </g>
+          <g id="mouth-grin" style="display:none">
+            <path d="M230 236 Q255 243 280 236 Q279 259 255 259 Q231 259 230 236Z" fill="#6e2618"/>
+            <path d="M233 237.5 Q255 244 277 237.5 Q276 247 255 248 Q234 247 233 237.5Z" fill="#fff"/>
+            <ellipse cx="255" cy="255" rx="10" ry="3.5" fill="#d0604e"/>
+          </g>
+          <g id="mouth-open" style="display:none">
+            <ellipse cx="255" cy="246" rx="13" ry="11" fill="#6e2618"/>
+            <path d="M244 238.5 Q255 242 266 238.5 L265 243 Q255 245 245 243Z" fill="#fff"/>
+            <ellipse cx="255" cy="253" rx="8" ry="3.5" fill="#d0604e"/>
+          </g>
+          <g id="mouth-mid" style="display:none">
+            <ellipse cx="255" cy="244" rx="12" ry="6" fill="#6e2618"/>
+            <path d="M245 240 Q255 243 265 240 L264 243.5 Q255 245.5 246 243.5Z" fill="#fff"/>
+          </g>
+          <path id="mouth-sad" style="display:none" d="M241 251 Q255 240 269 251" stroke="#5a2216" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        </g>
+
+        <g id="eyes-open">
+          <g id="eye-l">
+            <circle cx="220" cy="190" r="21" fill="#fff"/>
+            <g clip-path="url(#clip-eye-l)">
+              <g id="pupil-l" class="pupil">
+                <circle cx="223" cy="192" r="14" fill="#6e2f18"/><circle cx="223" cy="192" r="8.5" fill="#2a120a"/>
+                <circle cx="217" cy="185" r="5" fill="#fff"/><circle cx="228" cy="197" r="2" fill="#fff"/>
+              </g>
+              <!-- eyelid: translateY(-48px) = open, 0 = closed -->
+              <g id="lid-l" style="transform:translateY(-48px)">
+                <path d="M194 160 H246 V208 Q220 214 194 208Z" fill="#a4552a"/>
+                <path d="M198 197 Q220 207 242 197" stroke="#3a1d12" stroke-width="4" fill="none"/>
+              </g>
+            </g>
+            <circle cx="220" cy="190" r="21" fill="none" stroke="#3a1d12" stroke-width="4.5"/>
+          </g>
+          <g id="eye-r">
+            <circle cx="288" cy="190" r="21" fill="#fff"/>
+            <g clip-path="url(#clip-eye-r)">
+              <g id="pupil-r" class="pupil">
+                <circle cx="285" cy="192" r="14" fill="#6e2f18"/><circle cx="285" cy="192" r="8.5" fill="#2a120a"/>
+                <circle cx="279" cy="185" r="5" fill="#fff"/><circle cx="290" cy="197" r="2" fill="#fff"/>
+              </g>
+              <g id="lid-r" style="transform:translateY(-48px)">
+                <path d="M262 160 H314 V208 Q288 214 262 208Z" fill="#a4552a"/>
+                <path d="M266 197 Q288 207 310 197" stroke="#3a1d12" stroke-width="4" fill="none"/>
+              </g>
+            </g>
+            <circle cx="288" cy="190" r="21" fill="none" stroke="#3a1d12" stroke-width="4.5"/>
+          </g>
+        </g>
+        <path id="eyes-happy" style="display:none" d="M202 196 Q220 172 238 196 M270 196 Q288 172 306 196" stroke="#3a1d12" stroke-width="6" fill="none" stroke-linecap="round"/>
+
+        <path id="brow-l" d="M201 160 Q219 145 238 156" stroke="#2b2224" stroke-width="9" fill="none" stroke-linecap="round" style="transform-origin:219px 154px"/>
+        <path id="brow-r" d="M270 156 Q289 145 307 160" stroke="#2b2224" stroke-width="9" fill="none" stroke-linecap="round" style="transform-origin:289px 154px"/>
+
+        <g id="hair" style="transform-origin:255px 130px">
+          <g fill="#2b2224">
+            <ellipse cx="255" cy="92" rx="88" ry="38"/>
+            <circle cx="188" cy="76" r="19"/><circle cx="218" cy="62" r="21"/><circle cx="255" cy="57" r="23"/>
+            <circle cx="292" cy="62" r="21"/><circle cx="322" cy="76" r="19"/>
+            <circle cx="168" cy="96" r="17"/><circle cx="164" cy="116" r="15"/><circle cx="170" cy="130" r="10"/>
+            <circle cx="342" cy="96" r="17"/><circle cx="346" cy="116" r="15"/><circle cx="340" cy="130" r="10"/>
+            <circle cx="192" cy="121" r="11"/><circle cx="213" cy="120" r="12"/><circle cx="234" cy="119" r="12"/>
+            <circle cx="255" cy="119" r="12"/><circle cx="276" cy="119" r="12"/><circle cx="297" cy="120" r="12"/><circle cx="318" cy="121" r="11"/>
+          </g>
+          <path d="M205 71 Q214 62 225 68 M244 64 Q256 55 268 64 M287 69 Q298 62 308 72 M179 101 Q186 92 195 96 M317 96 Q326 91 333 101 M228 96 Q238 88 250 94 M266 94 Q276 87 288 95"
+                stroke="#43383a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- sparkles for the "correct" reaction -->
+    <g fill="#ffc928">
+      <path id="spark-1" class="fx" opacity="0" d="M92 251 Q93.6 260.4 103 262 Q93.6 263.6 92 273 Q90.4 263.6 81 262 Q90.4 260.4 92 251Z"/>
+      <path id="spark-2" class="fx" opacity="0" d="M118 214 Q119.2 220.8 126 222 Q119.2 223.2 118 230 Q116.8 223.2 110 222 Q116.8 220.8 118 214Z"/>
+      <path id="spark-3" class="fx" opacity="0" d="M84 293 Q85 299 91 300 Q85 301 84 307 Q83 301 77 300 Q83 299 84 293Z"/>
+    </g>
+  </g>
+</svg>
