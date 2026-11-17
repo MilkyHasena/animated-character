@@ -131,8 +131,27 @@ armR.value = withSequence(withTiming(30, { duration: 400 }), withTiming(0, { dur
 
 To add a new built-in reaction, copy one of the entries in the `MAN` and `WOMAN` reaction sets (or the `shared` set used by both) at the bottom of `Character.tsx` and add its name to the `Reaction` type.
 
+## Performance
+
+All motion runs on the UI thread through Reanimated. Each body part is drawn once, cropped to its own size and kept as a cached bitmap (`renderToHardwareTextureAndroid` / `shouldRasterizeIOS`), so animating only moves those bitmaps around.
+
+**Judge speed only in a release build on a real phone.** Debug builds (anything served by Metro) run with development checks and no optimisation, and emulators often lack proper GPU acceleration, so a character can stutter there and still run smoothly for users.
+
+| | Android | iOS |
+|---|---|---|
+| Expo | `npx expo run:android --variant release` | `npx expo run:ios --configuration Release` |
+| React Native CLI | `npx react-native run-android --mode release` | `npx react-native run-ios --mode Release` |
+
+To measure it, open the dev menu and turn on **Perf Monitor**. While the character animates, the UI and JS numbers should stay close to 60.
+
+Tips:
+- Show one character at a time.
+- On screens where the character is small or not the focus, pass `idle={false}` so it only moves when you call `play()`.
+- Unmount it when its screen isn't visible (for example inside a tab that's in the background), so its idle timers stop.
+
 ## Troubleshooting
 
+- **Choppy only while developing:** see Performance above. Check a release build before changing anything.
 - **The character draws but doesn't move:** the Reanimated Babel plugin is missing or Metro's cache is stale. Check step 1 and restart with `--reset-cache`.
 - **"Reanimated failed to initialize" / native module errors:** rebuild the app (`npx expo run:ios`, `npx react-native run-android`, or a new dev-client build). Expo Go already includes both libraries.
 - **The idle loop doesn't play on one device:** that device has Reduce Motion turned on. This is intended.

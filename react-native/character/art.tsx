@@ -1,7 +1,7 @@
 // The character's drawings, one component per moving layer.
 // Every layer uses the same 512 x 720 canvas, so the layers line up when stacked.
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import Svg, { Circle, Ellipse, G, Line, Path, Rect } from 'react-native-svg';
 
 export const VIEW_W = 512;
@@ -19,18 +19,29 @@ const C = {
   mouth: '#6e2618', tongue: '#d0604e', eyeLine: '#3a1d12', iris: '#8a4a26', pupil: '#2a120a',
 };
 
-export const Layer = ({ children }: { children: React.ReactNode }) => (
-  <Svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} width="100%" height="100%" style={StyleSheet.absoluteFill}>
-    {children}
-  </Svg>
+// x, y, width, height of a layer's drawing, in canvas units
+export type Box = [x: number, y: number, w: number, h: number];
+const pct = (v: number, of: number) => `${(v / of) * 100}%` as const;
+
+// One drawing. The view is cropped to the drawing's own box (so the phone isn't compositing dozens of
+// full-screen transparent layers) and cached as a bitmap, since a drawing never changes; animations only
+// move, rotate, scale or fade the views around it. Without a box it covers the whole canvas.
+export const Layer = ({ children, box = [0, 0, VIEW_W, VIEW_H] }: { children: React.ReactNode; box?: Box }) => (
+  <View
+    renderToHardwareTextureAndroid
+    shouldRasterizeIOS
+    style={{ position: 'absolute', left: pct(box[0], VIEW_W), top: pct(box[1], VIEW_H), width: pct(box[2], VIEW_W), height: pct(box[3], VIEW_H) }}
+  >
+    <Svg viewBox={box.join(' ')} width="100%" height="100%">{children}</Svg>
+  </View>
 );
 
 export const Shadow = () => (
-  <Layer><Ellipse cx={257} cy={686} rx={112} ry={9} fill="#000" opacity={0.08} /></Layer>
+  <Layer box={[143, 675, 228, 22]}><Ellipse cx={257} cy={686} rx={112} ry={9} fill="#000" opacity={0.08} /></Layer>
 );
 
 export const Legs = () => (
-  <Layer>
+  <Layer box={[152, 442, 210, 246]}>
     <Path d="M250 646 L250 674 L160 674 Q155 662 168 653 Q192 640 216 636 L250 640Z" fill={C.shoe} stroke={C.shoeLine} strokeWidth={1.5} />
     <Path d="M176 650 Q186 660 184 674" stroke="#dfe6ee" strokeWidth={3} fill="none" />
     <Path d="M200 643 l8 8 M211 640 l8 8" stroke="#c9d5e2" strokeWidth={3} strokeLinecap="round" />
@@ -52,7 +63,7 @@ export const Legs = () => (
 );
 
 export const Torso = () => (
-  <Layer>
+  <Layer box={[166, 253, 178, 205]}>
     <Path d="M228 290 H282 L284 452 H226Z" fill="#fff" />
     <Path d="M233 258 H277 V298 Q255 316 233 298Z" fill={C.neck} />
     <Path d="M233 262 H277 V282 Q255 292 233 282Z" fill={C.neckShade} />
@@ -72,23 +83,23 @@ export const Torso = () => (
 
 // ---- arm (drawn as the viewer's left arm; the right arm is the same drawing mirrored) ----
 export const ArmLUpper = () => (
-  <Layer>
+  <Layer box={[148, 298, 81, 112]}>
     <Line x1={190} y1={320} x2={170} y2={386} stroke={C.jacket} strokeWidth={40} strokeLinecap="round" />
     <Path d="M207 336 L190 388" stroke={C.jacketLine} strokeWidth={2} strokeLinecap="round" />
   </Layer>
 );
 export const ForearmL = () => (
-  <Layer><Line x1={170} y1={386} x2={168} y2={428} stroke={C.jacket} strokeWidth={38} strokeLinecap="round" /></Layer>
+  <Layer box={[147, 365, 44, 84]}><Line x1={170} y1={386} x2={168} y2={428} stroke={C.jacket} strokeWidth={38} strokeLinecap="round" /></Layer>
 );
 export const CuffL = () => (
-  <Layer>
+  <Layer box={[144, 389, 48, 60]}>
     <Rect x={147} y={424} width={42} height={22} rx={6} fill={C.jacketShade} />
     <Path d="M189 392 L187 424" stroke={C.jacketLine} strokeWidth={2} strokeLinecap="round" />
   </Layer>
 );
 // Hand hanging at his side: palm toward his leg, thumb in front, fingers loosely curled.
 export const HandRelaxed = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
-  <Layer>
+  <Layer box={[146 + dx, 440 + dy, 46, 62]}>
     <G x={dx} y={dy}>
       <Path d="M155 444 Q148 462 151 480 Q154 496 166 498 Q178 498 181 486 Q184 466 181 444Z" fill={c.skin} />
       <Path d="M156 456 Q151 470 155 484" stroke={c.skinShade} strokeWidth={4} fill="none" strokeLinecap="round" opacity={0.45} />
@@ -101,7 +112,7 @@ export const HandRelaxed = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
 // Thumbs-up and open hands are drawn upright (thumb toward his body), then pre-rotated so they sit
 // upright once the arm is raised.
 export const HandThumb = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
-  <Layer>
+  <Layer box={[130 + dx, 434 + dy, 65, 91]}>
     <G x={dx} y={dy}>
       <G rotation={190} origin="168, 446">
         <Rect x={148} y={410} width={36} height={40} rx={13} fill={c.skin} />
@@ -125,7 +136,7 @@ export const HandThumb = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
   </Layer>
 );
 export const HandOpen = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
-  <Layer>
+  <Layer box={[117 + dx, 431 + dy, 84, 95]}>
     <G x={dx} y={dy}>
       <G rotation={189} origin="168, 446">
         <Rect x={148} y={390} width={9} height={34} rx={4.5} rotation={-9} origin="152, 422" fill={c.skin} />
@@ -145,7 +156,7 @@ export const HandOpen = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
 // Clapping hand seen edge-on (palm toward his body's centre), drawn upright and pre-rotated to sit
 // upright when the forearm is folded across the chest.
 export const HandClap = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
-  <Layer>
+  <Layer box={[160 + dx, 432 + dy, 71, 42]}>
     <G x={dx} y={dy}>
       <G rotation={95} origin="168, 446">
         <Path d="M160 448 Q157 420 159 400 Q160 389 167 388 Q174 389 175 400 Q177 420 176 448Z" fill={c.skin} />
@@ -159,7 +170,7 @@ export const HandClap = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
 
 // ---- head ----
 export const HeadBase = () => (
-  <Layer>
+  <Layer box={[147, 108, 216, 174]}>
     <Circle cx={172} cy={206} r={21} fill={C.skin} />
     <Path d="M166 198 Q176 201 174 214" stroke={C.skinDark} strokeWidth={4} fill="none" strokeLinecap="round" />
     <Circle cx={338} cy={206} r={21} fill={C.skin} />
@@ -174,44 +185,44 @@ export const HeadBase = () => (
 );
 
 export const MouthSmile = () => (
-  <Layer>
+  <Layer box={[231, 236, 48, 21]}>
     <Path d="M233 238 Q255 244 277 238 Q275 255 255 255 Q235 255 233 238Z" fill={C.mouth} />
     <Path d="M236 239.5 Q255 245 274 239.5 Q272 247 255 248 Q238 247 236 239.5Z" fill="#fff" />
   </Layer>
 );
 export const MouthGrin = () => (
-  <Layer>
+  <Layer box={[228, 234, 54, 27]}>
     <Path d="M230 236 Q255 243 280 236 Q279 259 255 259 Q231 259 230 236Z" fill={C.mouth} />
     <Path d="M233 237.5 Q255 244 277 237.5 Q276 247 255 248 Q234 247 233 237.5Z" fill="#fff" />
     <Ellipse cx={255} cy={255} rx={10} ry={3.5} fill={C.tongue} />
   </Layer>
 );
 export const MouthOpen = () => (
-  <Layer>
+  <Layer box={[240, 233, 30, 26]}>
     <Ellipse cx={255} cy={246} rx={13} ry={11} fill={C.mouth} />
     <Path d="M244 238.5 Q255 242 266 238.5 L265 243 Q255 245 245 243Z" fill="#fff" />
     <Ellipse cx={255} cy={253} rx={8} ry={3.5} fill={C.tongue} />
   </Layer>
 );
 export const MouthMid = () => (
-  <Layer>
+  <Layer box={[241, 236, 28, 16]}>
     <Ellipse cx={255} cy={244} rx={12} ry={6} fill={C.mouth} />
     <Path d="M245 240 Q255 243 265 240 L264 243.5 Q255 245.5 246 243.5Z" fill="#fff" />
   </Layer>
 );
 export const MouthFlat = () => (
-  <Layer><Path d="M243 247 Q255 249 267 247" stroke={C.mouth} strokeWidth={4.5} fill="none" strokeLinecap="round" /></Layer>
+  <Layer box={[238, 242, 34, 11]}><Path d="M243 247 Q255 249 267 247" stroke={C.mouth} strokeWidth={4.5} fill="none" strokeLinecap="round" /></Layer>
 );
 export const MouthSad = () => (
-  <Layer><Path d="M241 251 Q255 240 269 251" stroke="#5a2216" strokeWidth={4.5} fill="none" strokeLinecap="round" /></Layer>
+  <Layer box={[236, 241, 38, 15]}><Path d="M241 251 Q255 240 269 251" stroke="#5a2216" strokeWidth={4.5} fill="none" strokeLinecap="round" /></Layer>
 );
 
 export const EyeWhites = () => (
-  <Layer><Circle cx={220} cy={190} r={21} fill="#fff" /><Circle cx={288} cy={190} r={21} fill="#fff" /></Layer>
+  <Layer box={[197, 167, 114, 46]}><Circle cx={220} cy={190} r={21} fill="#fff" /><Circle cx={288} cy={190} r={21} fill="#fff" /></Layer>
 );
 // Pupils are small enough to move up to ~5 units without leaving the eye, so they need no clipping.
 export const Pupils = () => (
-  <Layer>
+  <Layer box={[208, 178, 92, 28]}>
     {[[222, 218, 226], [286, 282, 290]].map(([x, hx, sx]) => (
       <G key={x}>
         <Circle cx={x} cy={192} r={11.5} fill={C.iris} />
@@ -224,7 +235,7 @@ export const Pupils = () => (
 );
 // Droopy upper lids for the "wrong" face: the top slice of each eye circle.
 export const SadLids = () => (
-  <Layer>
+  <Layer box={[195, 165, 118, 26]}>
     {[220, 288].map(cx => (
       <G key={cx}>
         <Path d={`M${cx - 20.1} 184 Q${cx} 190 ${cx + 20.1} 184 A21 21 0 0 0 ${cx - 20.1} 184Z`} fill={C.neck} />
@@ -234,7 +245,7 @@ export const SadLids = () => (
   </Layer>
 );
 export const EyeOutlines = () => (
-  <Layer>
+  <Layer box={[194, 162, 120, 54]}>
     <Circle cx={220} cy={190} r={21} fill="none" stroke={C.eyeLine} strokeWidth={4.5} />
     <Circle cx={288} cy={190} r={21} fill="none" stroke={C.eyeLine} strokeWidth={4.5} />
     {/* resting upper lids */}
@@ -245,14 +256,14 @@ export const EyeOutlines = () => (
   </Layer>
 );
 export const EyesHappy = () => (
-  <Layer><Path d="M202 196 Q220 172 238 196 M270 196 Q288 172 306 196" stroke={C.eyeLine} strokeWidth={6} fill="none" strokeLinecap="round" /></Layer>
+  <Layer box={[197, 179, 114, 22]}><Path d="M202 196 Q220 172 238 196 M270 196 Q288 172 306 196" stroke={C.eyeLine} strokeWidth={6} fill="none" strokeLinecap="round" /></Layer>
 );
 
 export const BrowL = () => (
-  <Layer><Path d="M201 160 Q219 145 238 156" stroke={C.hair} strokeWidth={9} fill="none" strokeLinecap="round" /></Layer>
+  <Layer box={[194, 144, 51, 23]}><Path d="M201 160 Q219 145 238 156" stroke={C.hair} strokeWidth={9} fill="none" strokeLinecap="round" /></Layer>
 );
 export const BrowR = () => (
-  <Layer><Path d="M270 156 Q289 145 307 160" stroke={C.hair} strokeWidth={9} fill="none" strokeLinecap="round" /></Layer>
+  <Layer box={[263, 144, 51, 23]}><Path d="M270 156 Q289 145 307 160" stroke={C.hair} strokeWidth={9} fill="none" strokeLinecap="round" /></Layer>
 );
 
 const CURLS: [number, number, number][] = [
@@ -261,7 +272,7 @@ const CURLS: [number, number, number][] = [
   [192, 121, 11], [213, 120, 12], [234, 119, 12], [255, 119, 12], [276, 119, 12], [297, 120, 12], [318, 121, 11],
 ];
 export const Hair = () => (
-  <Layer>
+  <Layer box={[145, 30, 220, 114]}>
     <Ellipse cx={255} cy={92} rx={88} ry={38} fill={C.hair} />
     {CURLS.map(([cx, cy, r]) => <Circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={r} fill={C.hair} />)}
     <Path d="M205 71 Q214 62 225 68 M244 64 Q256 55 268 64 M287 69 Q298 62 308 72 M179 101 Q186 92 195 96 M317 96 Q326 91 333 101 M228 96 Q238 88 250 94 M266 94 Q276 87 288 95"
@@ -273,7 +284,7 @@ export const Hair = () => (
 export const Sparkle = ({ cx, cy, r }: { cx: number; cy: number; r: number }) => {
   const k = r * 0.15;
   return (
-    <Layer>
+    <Layer box={[cx - r - 1, cy - r - 1, 2 * r + 2, 2 * r + 2]}>
       <Path fill="#ffc928" d={`M${cx} ${cy - r} Q${cx + k} ${cy - k} ${cx + r} ${cy} Q${cx + k} ${cy + k} ${cx} ${cy + r} Q${cx - k} ${cy + k} ${cx - r} ${cy} Q${cx - k} ${cy - k} ${cx} ${cy - r}Z`} />
     </Layer>
   );
