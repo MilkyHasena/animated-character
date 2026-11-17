@@ -96,7 +96,7 @@ type Rig = {
 };
 const RIGS: Record<Variant, Rig> = {
   man: {
-    shoulderL: [190, 320], elbowL: [170, 386], axis: 262,
+    shoulderL: [190, 320], elbowL: [170, 386], axis: 255,
     neck: [255, 268], hair: [255, 130], eyes: [254, 190], browL: [219, 154], browR: [289, 154],
     sparks: [{ cx: 92, cy: 262, r: 11 }, { cx: 118, cy: 222, r: 8 }, { cx: 84, cy: 300, r: 7 }],
   },

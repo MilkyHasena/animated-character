@@ -62,11 +62,11 @@ export const Torso = () => (
     <Path d="M183 438 H233 V453 H185Z M277 438 H327 L325 453 H277Z" fill={C.jacketShade} />
     <Path d="M224 326 V438 M286 326 V438" stroke={C.jacketLine} strokeWidth={2} />
     <Path d="M239 276 Q212 280 205 297 L224 324 L239 300Z M271 276 Q298 280 305 297 L286 324 L271 300Z" fill={C.jacketShade} />
-    <Path d="M277 352 V368 Q277 374 283 374 H305 Q311 374 311 368 V352" stroke={C.jacketLine} strokeWidth={2} fill="none" />
-    <Rect x={275} y={338} width={38} height={14} rx={3} fill={C.hair} />
-    <Rect x={278} y={340.5} width={32} height={3.5} fill="#2f9e44" />
-    <Rect x={278} y={344} width={32} height={5.5} fill="#f5c518" />
-    <Path d="M278 349.5 L282 344 L286 349.5Z M286 349.5 L290 344 L294 349.5Z M294 349.5 L298 344 L302 349.5Z M302 349.5 L306 344 L310 349.5Z" fill="#d92c20" />
+    <Path d="M278 352 V368 Q278 374 284 374 H298 Q304 374 304 368 V352" stroke={C.jacketLine} strokeWidth={2} fill="none" />
+    <Rect x={276} y={338} width={30} height={14} rx={3} fill={C.hair} />
+    <Rect x={278} y={340.5} width={26} height={3.5} fill="#2f9e44" />
+    <Rect x={278} y={344} width={26} height={5.5} fill="#f5c518" />
+    <Path d="M278 349.5 L281.25 344 L284.5 349.5Z M284.5 349.5 L287.75 344 L291 349.5Z M291 349.5 L294.25 344 L297.5 349.5Z M297.5 349.5 L300.75 344 L304 349.5Z" fill="#d92c20" />
   </Layer>
 );
 
@@ -160,10 +160,10 @@ export const HandClap = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
 // ---- head ----
 export const HeadBase = () => (
   <Layer>
-    <Circle cx={166} cy={206} r={27} fill={C.skin} />
-    <Path d="M159 195 Q173 199 170 217" stroke={C.skinDark} strokeWidth={4} fill="none" strokeLinecap="round" />
-    <Circle cx={344} cy={206} r={27} fill={C.skin} />
-    <Path d="M351 195 Q337 199 340 217" stroke={C.skinDark} strokeWidth={4} fill="none" strokeLinecap="round" />
+    <Circle cx={172} cy={206} r={21} fill={C.skin} />
+    <Path d="M166 198 Q176 201 174 214" stroke={C.skinDark} strokeWidth={4} fill="none" strokeLinecap="round" />
+    <Circle cx={338} cy={206} r={21} fill={C.skin} />
+    <Path d="M344 198 Q334 201 336 214" stroke={C.skinDark} strokeWidth={4} fill="none" strokeLinecap="round" />
     <Path d="M174 150 V200 Q174 272 255 274 Q336 272 336 200 V150 Q336 112 255 112 Q174 112 174 150Z" fill={C.skin} />
     <Path d="M174 128 H190 V178 H174Z M320 128 H336 V178 H320Z" fill={C.fade} />
     <Path d="M174 176 H190 Q192 210 212 226 Q234 217 255 220 Q276 217 298 226 Q318 210 320 176 H336 V200 Q336 274 255 278 Q174 274 174 200Z" fill={C.hair} />
@@ -227,8 +227,8 @@ export const SadLids = () => (
   <Layer>
     {[220, 288].map(cx => (
       <G key={cx}>
-        <Path d={`M${cx - 16.5} 177 Q${cx} 183 ${cx + 16.5} 177 A21 21 0 0 0 ${cx - 16.5} 177Z`} fill={C.neck} />
-        <Path d={`M${cx - 16.5} 177 Q${cx} 183 ${cx + 16.5} 177`} stroke={C.eyeLine} strokeWidth={4} fill="none" strokeLinecap="round" />
+        <Path d={`M${cx - 20.1} 184 Q${cx} 190 ${cx + 20.1} 184 A21 21 0 0 0 ${cx - 20.1} 184Z`} fill={C.neck} />
+        <Path d={`M${cx - 20.1} 184 Q${cx} 190 ${cx + 20.1} 184`} stroke={C.eyeLine} strokeWidth={4} fill="none" strokeLinecap="round" />
       </G>
     ))}
   </Layer>
@@ -237,6 +237,11 @@ export const EyeOutlines = () => (
   <Layer>
     <Circle cx={220} cy={190} r={21} fill="none" stroke={C.eyeLine} strokeWidth={4.5} />
     <Circle cx={288} cy={190} r={21} fill="none" stroke={C.eyeLine} strokeWidth={4.5} />
+    {/* resting upper lids */}
+    <Path d={`M202.2 175 Q220 178 237.8 175 A23.3 23.3 0 0 0 202.2 175Z`} fill={C.skin} />
+    <Path d="M202.2 175 Q220 178 237.8 175" stroke={C.eyeLine} strokeWidth={4.5} fill="none" strokeLinecap="round" />
+    <Path d={`M270.2 175 Q288 178 305.8 175 A23.3 23.3 0 0 0 270.2 175Z`} fill={C.skin} />
+    <Path d="M270.2 175 Q288 178 305.8 175" stroke={C.eyeLine} strokeWidth={4.5} fill="none" strokeLinecap="round" />
   </Layer>
 );
 export const EyesHappy = () => (

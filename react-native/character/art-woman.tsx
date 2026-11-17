@@ -92,10 +92,10 @@ const HAIRLINE: [number, number, number][] = [
 ];
 export const HeadBase = () => (
   <Layer>
-    <Circle cx={167} cy={256} r={25} fill={C.skin} />
-    <Path d="M160 246 Q173 250 171 266" stroke={C.skinDark} strokeWidth={4} fill="none" strokeLinecap="round" />
-    <Circle cx={346} cy={256} r={25} fill={C.skin} />
-    <Path d="M353 246 Q340 250 342 266" stroke={C.skinDark} strokeWidth={4} fill="none" strokeLinecap="round" />
+    <Circle cx={179} cy={256} r={20} fill={C.skin} />
+    <Path d="M172 248 Q182 251 180 264" stroke={C.skinDark} strokeWidth={4} fill="none" strokeLinecap="round" />
+    <Circle cx={334} cy={256} r={20} fill={C.skin} />
+    <Path d="M341 248 Q331 251 333 264" stroke={C.skinDark} strokeWidth={4} fill="none" strokeLinecap="round" />
     <Path d="M185 230 V258 Q185 316 256 318 Q328 316 328 258 V230 Q328 172 256 172 Q185 172 185 230Z" fill={C.skin} />
     {/* hair cap with a scalloped hairline, then the headband on top of it */}
     <Path d="M177 244 V215 Q180 144 256 142 Q333 144 336 215 V244 H324 Q325 206 311 193 Q256 168 202 193 Q188 206 189 244Z" fill={C.hair} />
@@ -164,8 +164,8 @@ export const SadLids = () => (
   <Layer>
     {EYES.map(cx => (
       <G key={cx}>
-        <Path d={`M${cx - 14.7} 229 Q${cx} 235 ${cx + 14.7} 229 A19 19 0 0 0 ${cx - 14.7} 229Z`} fill={C.neck} />
-        <Path d={`M${cx - 14.7} 229 Q${cx} 235 ${cx + 14.7} 229`} stroke={C.eyeLine} strokeWidth={4} fill="none" strokeLinecap="round" />
+        <Path d={`M${cx - 18} 235 Q${cx} 241 ${cx + 18} 235 A19 19 0 0 0 ${cx - 18} 235Z`} fill={C.neck} />
+        <Path d={`M${cx - 18} 235 Q${cx} 241 ${cx + 18} 235`} stroke={C.eyeLine} strokeWidth={4} fill="none" strokeLinecap="round" />
       </G>
     ))}
   </Layer>
@@ -173,6 +173,11 @@ export const SadLids = () => (
 export const EyeOutlines = () => (
   <Layer>
     {EYES.map(cx => <Circle key={cx} cx={cx} cy={241} r={19} fill="none" stroke={C.eyeLine} strokeWidth={4.5} />)}
+    {/* resting upper lids */}
+    <Path d={`M206 227 Q222 230 238 227 A21.3 21.3 0 0 0 206 227Z`} fill={C.skin} />
+    <Path d="M206 227 Q222 230 238 227" stroke={C.eyeLine} strokeWidth={4.5} fill="none" strokeLinecap="round" />
+    <Path d={`M274 227 Q290 230 306 227 A21.3 21.3 0 0 0 274 227Z`} fill={C.skin} />
+    <Path d="M274 227 Q290 230 306 227" stroke={C.eyeLine} strokeWidth={4.5} fill="none" strokeLinecap="round" />
     {/* lashes at the outer corners */}
     <Path d="M203 232 L196 228 M201 239 L194 238 M207 226 L201 220 M309 232 L316 228 M311 239 L318 238 M305 226 L311 220"
       stroke={C.eyeLine} strokeWidth={3} strokeLinecap="round" />
