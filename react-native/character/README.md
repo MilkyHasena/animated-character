@@ -1,6 +1,6 @@
 # Animated character (React Native)
 
-Two animated mascots, a man and a woman, built from SVG and sharing one component. Each has a subtle idle loop that runs on its own (breathing, sway, blinks, glances), a talking mouth, and three reactions: **correct** (thumbs-up and a hop), **wrong** (head shake and a sad face) and **wave**.
+Two animated mascots, a man and a woman, built from SVG and sharing one component. Each has a subtle idle loop that runs on its own (breathing, sway, blinks, glances), a talking mouth, and six reactions: **correct**, **wrong**, **wave**, **high five**, **clap** and **impatient**. At rest both arms hang relaxed; the hand only goes on the hip in **impatient**.
 
 It's plain React Native code with no WebView and no image files. All motion runs on the UI thread through Reanimated.
 
@@ -68,6 +68,9 @@ Pick one with the `variant` prop: `<Character variant="man" />` or `<Character v
 | **Correct** | `ref.current.play('correct')` | 2.0 s | The user answered correctly. |
 | **Wrong** | `ref.current.play('wrong')` | 1.9 s | The user answered incorrectly. |
 | **Wave** | `ref.current.play('wave')` | 2.1 s | A greeting, e.g. lesson start or an empty state. |
+| **High five** | `ref.current.play('highFive')` | 1.9 s | A reward, e.g. after a streak of correct answers. Raises an open palm and pushes it toward the user. |
+| **Clap** | `ref.current.play('clap')` | 2.3 s | Celebration, e.g. finishing a lesson. Four claps in front of the chest. |
+| **Impatient** | `ref.current.play('impatient')` | 2.8 s | The user is taking a long time to answer. Hand on hip, one eyebrow up, flat mouth. Your app decides when; see below. |
 | **Blink** | `ref.current.blink()` | 0.16 s | Rarely needed; idle already blinks. |
 | **Stop** | `ref.current.stop()` | instant | Cancels a running reaction and returns to rest, e.g. when leaving the screen. |
 
@@ -75,6 +78,13 @@ Rules:
 - `play()` returns a Promise that resolves when the reaction finishes, so you can `await` it before moving on.
 - Starting a new reaction cancels the current one, so calling `play` quickly in a row is safe.
 - While a reaction plays it controls the face; talking resumes automatically afterwards if `talking` is still true.
+- **Impatient** never plays by itself. Start a timer when a question appears and call it if there's no answer, for example:
+  ```tsx
+  useEffect(() => {
+    const t = setTimeout(() => character.current?.play('impatient'), 15000); // 15 s without an answer
+    return () => clearTimeout(t); // a new question or an answer cancels it
+  }, [questionId]);
+  ```
 - If the phone's **Reduce Motion** setting is on, the idle loop is switched off but reactions still play, because they're answer feedback.
 
 ## Props
@@ -96,28 +106,30 @@ The character doesn't take touches, so put it inside a `Pressable` if you want i
 ```tsx
 import { withSequence, withTiming } from 'react-native-reanimated';
 
-// raise the hip arm and put it back
+// raise the right arm outward and put it back
 const { armR } = character.current!.parts;
-armR.value = withSequence(withTiming(-30, { duration: 400 }), withTiming(0, { duration: 400 }));
+armR.value = withSequence(withTiming(30, { duration: 400 }), withTiming(0, { duration: 400 }));
 ```
 
 | Part | Rest value | Meaning |
 |---|---|---|
-| `armL`, `forearmL` | 0 | The free arm (viewer's left): shoulder and elbow rotation. `armL 40` + `forearmL 130` raises it. |
-| `armR`, `forearmR` | 0 | The arm with the hand on the hip. |
+| `armL`, `forearmL` | 0 | The arm on the viewer's left: shoulder and elbow rotation. `armL 40` + `forearmL 130` raises it. |
+| `armLScale` | 1 | Size of that arm; above 1 it reaches toward the viewer (used by the high five). |
+| `armR`, `forearmR` | 0 | The arm on the viewer's right. It mirrors the left arm, so positive angles also move it outward. `armR 20` + `forearmR -52` puts the hand on the hip. |
 | `head`, `headY` | 0 | Head tilt (deg) and head bob (units). |
 | `upperY` | 0 | Moves the whole upper body up and down. |
 | `rigY`, `rigScaleX`, `rigScaleY`, `shadowScale` | 0, 1, 1, 1 | The whole character: jump, squash/stretch, and the ground shadow. |
 | `hairScaleY` | 1 | Hair bounce. |
 | `browLY`, `browRY`, `browLRot`, `browRRot` | 0 | Eyebrow raise (negative = up) and tilt. |
 | `pupilY` | 0 | Look down (positive) or up. |
-| `mouth` | `MOUTH.smile` | Set it to `MOUTH.smile`, `grin`, `open`, `mid` or `sad`. |
-| `hand` | `HAND.relaxed` | Set it to `HAND.relaxed`, `thumb` or `open` (the free hand). |
+| `mouth` | `MOUTH.smile` | Set it to `MOUTH.smile`, `grin`, `open`, `mid`, `sad` or `flat`. |
+| `hand` | `HAND.relaxed` | Left hand: `HAND.relaxed`, `thumb`, `open` or `clap`. |
+| `handR` | `HAND.relaxed` | Right hand: `HAND.relaxed` or `clap`. |
 | `eyes` | `EYES.open` | Set it to `EYES.open`, `happy` or `sad`. |
 
 `MOUTH`, `HAND` and `EYES` are exported from `Character.tsx`. Call `stop()` to put every part back to rest.
 
-To add a new built-in reaction, copy one of the entries in the `MAN` and `WOMAN` reaction sets at the bottom of `Character.tsx` and add its name to the `Reaction` type.
+To add a new built-in reaction, copy one of the entries in the `MAN` and `WOMAN` reaction sets (or the `shared` set used by both) at the bottom of `Character.tsx` and add its name to the `Reaction` type.
 
 ## Troubleshooting
 

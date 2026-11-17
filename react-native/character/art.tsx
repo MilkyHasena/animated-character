@@ -16,7 +16,7 @@ const C = {
   skin: '#b8632e', skinDark: '#8a431c', skinShade: '#9a4d22', skinLight: '#c06c34', nail: '#d98a52', neck: '#a4552a', neckShade: '#8f4720',
   hair: '#2b2224', fade: '#43383a', jacket: '#f09c1c', jacketShade: '#d97f0c', jacketLine: '#c8730a',
   jeans: '#155b68', jeansDark: '#0f4753', shoe: '#f4f6f9', shoeLine: '#d3dde8', sole: '#a9b9cb',
-  mouth: '#6e2618', tongue: '#d0604e', eyeLine: '#3a1d12', iris: '#6e2f18', pupil: '#2a120a',
+  mouth: '#6e2618', tongue: '#d0604e', eyeLine: '#3a1d12', iris: '#8a4a26', pupil: '#2a120a',
 };
 
 export const Layer = ({ children }: { children: React.ReactNode }) => (
@@ -62,38 +62,15 @@ export const Torso = () => (
     <Path d="M183 438 H233 V453 H185Z M277 438 H327 L325 453 H277Z" fill={C.jacketShade} />
     <Path d="M224 326 V438 M286 326 V438" stroke={C.jacketLine} strokeWidth={2} />
     <Path d="M239 276 Q212 280 205 297 L224 324 L239 300Z M271 276 Q298 280 305 297 L286 324 L271 300Z" fill={C.jacketShade} />
-    <Path d="M287 352 V368 Q287 374 293 374 H315 Q321 374 321 368 V352" stroke={C.jacketLine} strokeWidth={2} fill="none" />
-    <Rect x={285} y={338} width={38} height={14} rx={3} fill={C.hair} />
-    <Rect x={288} y={340.5} width={32} height={3.5} fill="#2f9e44" />
-    <Rect x={288} y={344} width={32} height={5.5} fill="#f5c518" />
-    <Path d="M288 349.5 L292 344 L296 349.5Z M296 349.5 L300 344 L304 349.5Z M304 349.5 L308 344 L312 349.5Z M312 349.5 L316 344 L320 349.5Z" fill="#d92c20" />
+    <Path d="M277 352 V368 Q277 374 283 374 H305 Q311 374 311 368 V352" stroke={C.jacketLine} strokeWidth={2} fill="none" />
+    <Rect x={275} y={338} width={38} height={14} rx={3} fill={C.hair} />
+    <Rect x={278} y={340.5} width={32} height={3.5} fill="#2f9e44" />
+    <Rect x={278} y={344} width={32} height={5.5} fill="#f5c518" />
+    <Path d="M278 349.5 L282 344 L286 349.5Z M286 349.5 L290 344 L294 349.5Z M294 349.5 L298 344 L302 349.5Z M302 349.5 L306 344 L310 349.5Z" fill="#d92c20" />
   </Layer>
 );
 
-// Left hand resting on the hip: back of the hand, fingers pointing down toward the belt.
-// Not a layer of its own: it is drawn inside the forearm layer.
-export const HandHip = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
-  <G x={dx} y={dy}>
-    <Path d="M356 408 Q338 402 320 409 Q305 414 301 424 Q298 432 304 435 Q299 441 303 447 Q301 453 308 456 Q310 462 318 460 Q333 457 345 447 Q354 438 358 424Z" fill={c.skin} />
-    <Path d="M321 412 Q323 431 331 450" stroke={c.skinShade} strokeWidth={4} fill="none" strokeLinecap="round" opacity={0.4} />
-    <Path d="M304 435 Q314 434 322 429 M303 447 Q314 446 324 439 M308 456 Q318 454 327 448" stroke={c.skinDark} strokeWidth={1.8} fill="none" strokeLinecap="round" opacity={0.75} />
-    <Path d="M330 414 Q340 412 348 416" stroke={c.skinLight} strokeWidth={4} fill="none" strokeLinecap="round" />
-  </G>
-);
-
-// ---- right arm (viewer's right, hand on hip) ----
-export const ArmRUpper = () => (
-  <Layer><Line x1={334} y1={320} x2={374} y2={378} stroke={C.jacket} strokeWidth={40} strokeLinecap="round" /></Layer>
-);
-export const ForearmR = () => (
-  <Layer>
-    <Line x1={374} y1={378} x2={352} y2={410} stroke={C.jacket} strokeWidth={36} strokeLinecap="round" />
-    <HandHip />
-    <Line x1={361} y1={397} x2={346} y2={420} stroke={C.jacketShade} strokeWidth={39} />
-  </Layer>
-);
-
-// ---- left arm (viewer's left: thumbs up / wave) ----
+// ---- arm (drawn as the viewer's left arm; the right arm is the same drawing mirrored) ----
 export const ArmLUpper = () => (
   <Layer>
     <Line x1={190} y1={320} x2={170} y2={386} stroke={C.jacket} strokeWidth={40} strokeLinecap="round" />
@@ -109,7 +86,7 @@ export const CuffL = () => (
     <Path d="M189 392 L187 424" stroke={C.jacketLine} strokeWidth={2} strokeLinecap="round" />
   </Layer>
 );
-// Right hand hanging at his side: palm toward his leg, thumb in front, fingers loosely curled.
+// Hand hanging at his side: palm toward his leg, thumb in front, fingers loosely curled.
 export const HandRelaxed = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
   <Layer>
     <G x={dx} y={dy}>
@@ -165,6 +142,21 @@ export const HandOpen = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
   </Layer>
 );
 
+// Clapping hand seen edge-on (palm toward his body's centre), drawn upright and pre-rotated to sit
+// upright when the forearm is folded across the chest.
+export const HandClap = ({ c = C, dx = 0, dy = 0 }: HandProps = {}) => (
+  <Layer>
+    <G x={dx} y={dy}>
+      <G rotation={95} origin="168, 446">
+        <Path d="M160 448 Q157 420 159 400 Q160 389 167 388 Q174 389 175 400 Q177 420 176 448Z" fill={c.skin} />
+        <Path d="M174 434 Q185 427 187 414 Q188 407 182 408 Q178 418 172 425Z" fill={c.skinLight} />
+        <Path d="M162 403 Q164 416 162 428" stroke={c.skinShade} strokeWidth={3} fill="none" strokeLinecap="round" opacity={0.5} />
+        <Path d="M161 423 Q168 426 175 423" stroke={c.skinDark} strokeWidth={1.6} fill="none" strokeLinecap="round" opacity={0.6} />
+      </G>
+    </G>
+  </Layer>
+);
+
 // ---- head ----
 export const HeadBase = () => (
   <Layer>
@@ -207,6 +199,9 @@ export const MouthMid = () => (
     <Path d="M245 240 Q255 243 265 240 L264 243.5 Q255 245.5 246 243.5Z" fill="#fff" />
   </Layer>
 );
+export const MouthFlat = () => (
+  <Layer><Path d="M243 247 Q255 249 267 247" stroke={C.mouth} strokeWidth={4.5} fill="none" strokeLinecap="round" /></Layer>
+);
 export const MouthSad = () => (
   <Layer><Path d="M241 251 Q255 240 269 251" stroke="#5a2216" strokeWidth={4.5} fill="none" strokeLinecap="round" /></Layer>
 );
@@ -217,12 +212,12 @@ export const EyeWhites = () => (
 // Pupils are small enough to move up to ~5 units without leaving the eye, so they need no clipping.
 export const Pupils = () => (
   <Layer>
-    {[[223, 217, 228], [285, 279, 290]].map(([x, hx, sx]) => (
+    {[[222, 218, 226], [286, 282, 290]].map(([x, hx, sx]) => (
       <G key={x}>
-        <Circle cx={x} cy={192} r={14} fill={C.iris} />
-        <Circle cx={x} cy={192} r={8.5} fill={C.pupil} />
-        <Circle cx={hx} cy={185} r={5} fill="#fff" />
-        <Circle cx={sx} cy={197} r={2} fill="#fff" />
+        <Circle cx={x} cy={192} r={11.5} fill={C.iris} />
+        <Circle cx={x} cy={192} r={5.5} fill={C.pupil} />
+        <Circle cx={hx} cy={187} r={4} fill="#fff" />
+        <Circle cx={sx} cy={196} r={1.6} fill="#fff" />
       </G>
     ))}
   </Layer>

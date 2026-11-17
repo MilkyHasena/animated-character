@@ -9,14 +9,13 @@ const C = {
   skin: '#b5531b', skinDark: '#7f3610', skinShade: '#994313', skinLight: '#c4622a', nail: '#dc8a55', neck: '#a54a17', neckShade: '#8c3c11',
   hair: '#2a1d1b', curl: '#43312d', band: '#f5b301', jacket: '#f4412f', jacketShade: '#d9301f', jacketDark: '#b8261a',
   pants: '#4a6b2c', pantsDark: '#3a5522', button: '#7d9a4f', shoe: '#f4f6f9', shoeLine: '#d3dde8', sole: '#a9b9cb',
-  mouth: '#5c1a12', tongue: '#e8556a', eyeLine: '#2a1410', iris: '#4a2412', pupil: '#1c0d08',
+  mouth: '#5c1a12', tongue: '#e8556a', eyeLine: '#2a1410', iris: '#7a3e1e', pupil: '#1c0d08',
   green: '#2f9e44', yellow: '#f5c518',
 };
 const SKIN: Skin = C;
 
-// Where her wrists sit relative to the man's (the hand drawings are shared).
+// Where her wrist sits relative to the man's (the hand drawings are shared).
 const HAND_L = { c: SKIN, dx: 2, dy: 24 };
-const HAND_R = { c: SKIN, dx: 4, dy: 24 };
 
 export const Legs = () => (
   <Layer>
@@ -65,19 +64,6 @@ const Trim = ({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2: numb
   </G>
 );
 
-// ---- right arm (viewer's right, hand on hip) ----
-export const ArmRUpper = () => (
-  <Layer><Line x1={316} y1={350} x2={370} y2={404} stroke={C.jacket} strokeWidth={34} strokeLinecap="round" /></Layer>
-);
-export const ForearmR = () => (
-  <Layer>
-    <Line x1={370} y1={404} x2={354} y2={432} stroke={C.jacket} strokeWidth={32} strokeLinecap="round" />
-    <Shared.HandHip {...HAND_R} />
-    <Line x1={365} y1={421} x2={350} y2={444} stroke={C.jacketShade} strokeWidth={34} />
-    <Trim x1={345.5} y1={424} x2={369.5} y2={441} />
-  </Layer>
-);
-
 // ---- left arm (viewer's left: thumbs up / wave) ----
 export const ArmLUpper = () => (
   <Layer>
@@ -98,6 +84,7 @@ export const CuffL = () => (
 export const HandRelaxed = () => <Shared.HandRelaxed {...HAND_L} />;
 export const HandThumb = () => <Shared.HandThumb {...HAND_L} />;
 export const HandOpen = () => <Shared.HandOpen {...HAND_L} />;
+export const HandClap = () => <Shared.HandClap {...HAND_L} />;
 
 // ---- head ----
 const HAIRLINE: [number, number, number][] = [
@@ -150,6 +137,9 @@ export const MouthMid = () => (
     <Path d="M245 278.5 Q256 282 267 278.5 L266 282.5 Q256 284.5 246 282.5Z" fill="#fff" />
   </Layer>
 );
+export const MouthFlat = () => (
+  <Layer><Path d="M243 288 Q256 290 269 288" stroke={C.mouth} strokeWidth={4.5} fill="none" strokeLinecap="round" /></Layer>
+);
 export const MouthSad = () => (
   <Layer><Path d="M240 294 Q256 281 272 294" stroke={C.mouth} strokeWidth={4.5} fill="none" strokeLinecap="round" /></Layer>
 );
@@ -160,12 +150,12 @@ export const EyeWhites = () => (
 );
 export const Pupils = () => (
   <Layer>
-    {[[224, 218.5, 229], [288, 282.5, 293]].map(([x, hx, sx]) => (
+    {[[223, 219, 227], [289, 285, 293]].map(([x, hx, sx]) => (
       <G key={x}>
-        <Circle cx={x} cy={243} r={13} fill={C.iris} />
-        <Circle cx={x} cy={243} r={8.5} fill={C.pupil} />
-        <Circle cx={hx} cy={236.5} r={5.5} fill="#fff" />
-        <Circle cx={sx} cy={248} r={2} fill="#fff" />
+        <Circle cx={x} cy={243} r={10.5} fill={C.iris} />
+        <Circle cx={x} cy={243} r={5} fill={C.pupil} />
+        <Circle cx={hx} cy={238.5} r={3.8} fill="#fff" />
+        <Circle cx={sx} cy={247} r={1.5} fill="#fff" />
       </G>
     ))}
   </Layer>
