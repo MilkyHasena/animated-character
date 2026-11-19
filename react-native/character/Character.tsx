@@ -10,6 +10,7 @@ import Animated, {
   withDelay, withRepeat, withSequence, withTiming,
 } from 'react-native-reanimated';
 import * as Art from './art';
+import { mouthBeats } from './speech';
 import * as WomanArt from './art-woman';
 
 export type Reaction = 'correct' | 'wrong' | 'wave' | 'highFive' | 'clap' | 'impatient';
@@ -20,7 +21,7 @@ export type CharacterProps = {
   variant?: Variant;
   /** Width in points. Height is size * 1.406. Default 220. */
   size?: number;
-  /** While true the mouth moves as if speaking (pair it with your audio). */
+  /** While true the mouth flaps continuously. For speech with known text, use say() instead: it moves once per syllable. */
   talking?: boolean;
   /** Subtle looping idle motion: breathing, sway, blinking, glances. Default true. */
   idle?: boolean;
@@ -33,6 +34,11 @@ export type CharacterHandle = {
   /** Cancels a running reaction and returns to the resting pose. */
   stop(): void;
   blink(): void;
+  /**
+   * Moves the mouth to match `text`: one opening per syllable, short pauses between words. Pass the audio
+   * length as `duration` (ms) to spread it over the clip. Resolves when done; a new say() (or say('')) cancels it.
+   */
+  say(text: string, options?: { duration?: number }): Promise<void>;
   /** Raw animation values for custom moves (see README). */
   parts: CharacterParts;
 };
@@ -146,6 +152,7 @@ export const Character = forwardRef<CharacterHandle, CharacterProps>(function Ch
   const busy = useRef(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const finish = useRef<(() => void) | null>(null);
+  const speech = useRef<{ timers: ReturnType<typeof setTimeout>[]; done: () => void }>({ timers: [], done: () => {} });
 
   // ---------- styles ----------
   const sShadow = useAnimatedStyle(() => ({ transform: pivot(k, 257, 686, [{ scale: p.shadowScale.value }]) as any }));
@@ -205,10 +212,28 @@ export const Character = forwardRef<CharacterHandle, CharacterProps>(function Ch
     });
   };
 
-  useImperativeHandle(ref, () => ({ play, stop, blink, parts }));
+  const say = (text: string, { duration }: { duration?: number } = {}) => {
+    speech.current.timers.forEach(clearTimeout);
+    speech.current.done();
+    const { beats, total } = mouthBeats(text, duration);
+    let syllable = 0;
+    const mouth = (open: boolean) => {
+      if (busy.current) return; // a reaction owns the face while it plays
+      p.mouth.value = !open ? MOUTH.smile : syllable++ % 3 === 2 ? MOUTH.mid : MOUTH.open;
+    };
+    return new Promise<void>(resolve => {
+      speech.current = {
+        timers: beats.map(b => setTimeout(() => mouth(b.open), b.at)),
+        done: () => { speech.current.done = () => {}; resolve(); },
+      };
+      speech.current.timers.push(setTimeout(() => { mouth(false); speech.current.done(); }, total));
+    });
+  };
+
+  useImperativeHandle(ref, () => ({ play, stop, blink, say, parts }));
 
   // stop timers when the component goes away
-  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  useEffect(() => () => { timers.current.forEach(clearTimeout); speech.current.timers.forEach(clearTimeout); }, []);
 
   // ---------- idle loop ----------
   useEffect(() => {

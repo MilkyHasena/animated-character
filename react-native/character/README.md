@@ -1,6 +1,6 @@
 # Animated character (React Native)
 
-Two animated mascots, a man and a woman, built from SVG and sharing one component. Each has a subtle idle loop that runs on its own (breathing, sway, blinks, glances), a talking mouth, and six reactions: **correct**, **wrong**, **wave**, **high five**, **clap** and **impatient**. At rest both arms hang relaxed; the hand only goes on the hip in **impatient**.
+Two animated mascots, a man and a woman, built from SVG and sharing one component. Each has a subtle idle loop that runs on its own (breathing, sway, blinks, glances), a mouth that speaks one movement per syllable, and six reactions: **correct**, **wrong**, **wave**, **high five**, **clap** and **impatient**. At rest both arms hang relaxed; the hand only goes on the hip in **impatient**.
 
 It's plain React Native code with no WebView and no image files. All motion runs on the UI thread through Reanimated.
 
@@ -27,31 +27,36 @@ Supported versions: react-native-svg 13+ and react-native-reanimated 3.5+ (inclu
 
 ## 2. Copy the folder
 
-Copy this whole `character/` folder into the app, for example to `src/components/character/`. It has four files:
+Copy this whole `character/` folder into the app, for example to `src/components/character/`. It has five files:
 
 | File | What it is |
 |---|---|
 | `Character.tsx` | The component. This is the only file you import from. |
 | `art.tsx` | The man's drawings, plus the pieces both characters share. You shouldn't need to edit it. |
 | `art-woman.tsx` | The woman's drawings. |
+| `speech.ts` | Turns text into mouth movements for `say()`. You shouldn't need to edit it. |
 | `ExampleScreen.tsx` | A demo screen with buttons and a quiz. Optional; delete it once you've seen it work. |
 
 ## 3. Use it
 
 ```tsx
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Character, CharacterHandle } from './components/character/Character';
 
 function LessonScreen() {
   const character = useRef<CharacterHandle>(null);
-  const [speaking, setSpeaking] = useState(false);
+
+  // call this at the moment the word's sound starts playing
+  function speak(word: string, clipLengthMs: number) {
+    return character.current?.say(word, { duration: clipLengthMs }); // mouth moves once per syllable
+  }
 
   async function onAnswer(isCorrect: boolean) {
     await character.current?.play(isCorrect ? 'correct' : 'wrong');
     // runs after the reaction has finished, e.g. go to the next question
   }
 
-  return <Character ref={character} variant="woman" size={200} talking={speaking} />;
+  return <Character ref={character} variant="woman" size={200} />;
 }
 ```
 
@@ -59,12 +64,31 @@ function LessonScreen() {
 
 Pick one with the `variant` prop: `<Character variant="man" />` or `<Character variant="woman" />`. Everything else is identical: the same props, the same `play()` calls and the same `parts`. The woman plays the same reactions with her own timing (a double hop and a bouncy hair puff on **correct**, a quicker wave), so her reactions run about 0.1 s longer. Always `await play()` instead of hard-coding the lengths.
 
+## Speaking
+
+Call `say()` with the text being spoken and, if you play a sound, the sound's length in milliseconds:
+
+```tsx
+character.current?.say('Hello');                           // natural speed, about 5 syllables a second
+character.current?.say('ሰላም', { duration: 800 });          // spread over an 0.8 s clip
+await character.current?.say('Good morning', { duration }); // resolves when the mouth has finished
+```
+
+- The mouth opens **once per syllable** with a short closed pause between words, so a one-word clip looks like one word. "Hi" is one movement, "hello" two, "ሰላም" two.
+- **English:** syllables are counted from vowel groups (a silent final *e* doesn't count). **Amharic / Ge'ez:** one per letter, except sixth-form letters (ል, ም, ት…), which are usually bare consonants.
+- Pass the clip length you get from your audio player (expo-av: `status.durationMillis`; expo-audio: `player.duration * 1000`; react-native-sound: `sound.getDuration() * 1000`). Without it the mouth uses a natural speaking speed.
+- Start `say()` at the same moment the sound starts. If a clip has a long silent gap at the start, trim the audio file itself.
+- If the text has more syllables than fit in the clip, some are merged so the mouth never flickers faster than about 9 times a second.
+- A new `say()` cancels the previous one; `say('')` just stops. While a reaction plays, the reaction controls the face.
+- Use `say()` **instead of** `talking`. The `talking` prop still works, but it flaps the mouth continuously, which makes short words look like sentences.
+
 ## Animation states
 
 | State | How to trigger | Length | When to use |
 |---|---|---|---|
 | **Idle** | Always on (turn it off with `idle={false}`) | loops | Default. Subtle breathing, sway, random blinks and glances. |
-| **Talking** | `talking={true}` / `talking={false}` | while true | While the character "speaks", e.g. while your audio or text-to-speech plays. |
+| **Speaking** | `ref.current.say(text, { duration })` | the clip's length | Whenever the character says something. See Speaking above. |
+| **Talking** | `talking={true}` / `talking={false}` | while true | Older, continuous mouth flapping. Prefer `say()`. |
 | **Correct** | `ref.current.play('correct')` | 2.0 s | The user answered correctly. |
 | **Wrong** | `ref.current.play('wrong')` | 1.9 s | The user answered incorrectly. |
 | **Wave** | `ref.current.play('wave')` | 2.1 s | A greeting, e.g. lesson start or an empty state. |
@@ -93,7 +117,7 @@ Rules:
 |---|---|---|---|
 | `variant` | `'man'` or `'woman'` | `'man'` | Which character to show. |
 | `size` | number | `220` | Width in points. Height is `size × 1.406`. |
-| `talking` | boolean | `false` | Mouth moves as if speaking. |
+| `talking` | boolean | `false` | Mouth flaps continuously while true. Prefer `say()`. |
 | `idle` | boolean | `true` | The looping idle motion. |
 | `style` | ViewStyle | | For positioning (margins etc.). |
 

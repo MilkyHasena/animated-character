@@ -27,6 +27,9 @@ export default function ExampleScreen() {
         <Button label="High five" onPress={() => character.current?.play('highFive')} />
         <Button label="Clap" onPress={() => character.current?.play('clap')} />
         <Button label="Impatient" onPress={() => character.current?.play('impatient')} />
+        <Button label='Say "Hi"' onPress={() => character.current?.say('Hi')} />
+        <Button label='Say "ሰላም"' onPress={() => character.current?.say('ሰላም')} />
+        <Button label='Say a sentence' onPress={() => character.current?.say('Good morning, how are you today?')} />
         <Button label={talking ? 'Stop talking' : 'Talk'} onPress={() => setTalking(t => !t)} />
         <Button label="Switch character" onPress={() => setVariant(v => (v === 'man' ? 'woman' : 'man'))} />
       </View>

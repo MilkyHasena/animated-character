@@ -1,6 +1,6 @@
 # Animated characters
 
-Two Duolingo-style animated mascots, a **man** and a **woman**. Each has a subtle looping idle animation (breathing, blinking, glances), a talking mouth, and six reactions: **correct** (thumbs-up and a hop), **wrong** (head shake and a sad face), **wave**, **high five**, **clap** and **impatient** (hand on hip, for when the user takes too long). The woman plays the reactions in her own, bouncier style.
+Two Duolingo-style animated mascots, a **man** and a **woman**. Each has a subtle looping idle animation (breathing, blinking, glances), a mouth that moves once per syllable when it speaks, and six reactions: **correct** (thumbs-up and a hop), **wrong** (head shake and a sad face), **wave**, **high five**, **clap** and **impatient** (hand on hip, for when the user takes too long). The woman plays the reactions in her own, bouncier style.
 
 The web demo and design files show the earlier version of the man (hand on hip at rest, no high five, clap or impatient).
 
